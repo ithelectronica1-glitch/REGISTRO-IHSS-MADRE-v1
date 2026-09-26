@@ -47,13 +47,12 @@
                         </p>
                     </div>
                 </div>
-
                 <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
                     <button id="adminStatusBtn" onclick="app.toggleAdminAuth()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95">
                         <i class="fa-solid fa-key text-emerald-300"></i>
                         <span id="adminBtnText">Ingresar Clave</span>
                     </button>
-                    <button id="syncBtn" onclick="app.syncFromCloud()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95" title="Sincronizar con Google Sheets">
+                    <button id="syncBtn" onclick="app.syncFromCloud()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
                         <i id="syncIcon" class="fa-solid fa-cloud-arrow-down text-emerald-300"></i>
                         <span id="syncStatusText">Sincronizar</span>
                     </button>
@@ -146,7 +145,7 @@
                         <i class="fa-solid fa-users text-emerald-700"></i>
                         Aportaciones de los Hermanos - <span class="currentYearLabel text-emerald-800">2026</span>
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por cada hermano. Presione en un mes para ver o editar el comprobante.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por cada hermano.</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="app.openPaymentModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition shadow flex items-center gap-1.5">
@@ -329,7 +328,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observaciones / Notas (Opcional)</label>
-                    <input type="text" id="payNotes" placeholder="Ej. Pago adelantado, transferencia por Ficohsa..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
+                    <input type="text" id="payNotes" placeholder="Ej. Pago adelantado..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
                 </div>
                 <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
                     <p class="text-[11px] font-bold text-emerald-900 uppercase">Notificaciones por WhatsApp</p>
@@ -438,9 +437,8 @@
                 this.tempVoucherBase64 = null;
                 this.tempSchoolVoucherBase64 = null;
 
-                // ✅ NUEVO: Candado para evitar condición de carrera
-                this.isBusy = false;      // true mientras se guarda o sincroniza
-                this.syncInProgress = false; // true mientras hay un GET en curso
+                // ✅ LA CLAVE DEL FIX: contador de versión local
+                this.localVersion = 0;
 
                 this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
                 this.STORAGE_KEY_SCHOOL = 'ihss_school_deposits_v2';
@@ -460,26 +458,16 @@
 
                 await this.syncFromCloud();
 
-                // Auto-refresco cada 15s — pero respeta el candado isBusy
                 setInterval(() => {
                     this.syncFromCloud();
                 }, 15000);
             }
 
-            // ✅ GET con candado — no se ejecuta si hay un save en curso
+            // ✅ GET con verificación de versión
             async syncFromCloud() {
-                // Si hay un guardado en curso, no sincronizar
-                if (this.isBusy) {
-                    console.log("⏸️ Sync pausado: hay un guardado en curso");
-                    return;
-                }
-                // Si ya hay un GET en curso, no lanzar otro
-                if (this.syncInProgress) {
-                    console.log("⏸️ Sync ya en progreso, se omite");
-                    return;
-                }
+                // 🔒 Capturamos la versión al MOMENTO de empezar el fetch
+                const versionAtStart = this.localVersion;
 
-                this.syncInProgress = true;
                 const syncIcon = document.getElementById('syncIcon');
                 const syncText = document.getElementById('syncStatusText');
                 if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
@@ -493,12 +481,15 @@
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     const data = await response.json();
 
-                    // ✅ Verificar OTRA VEZ antes de aplicar (por si empezó un save mientras)
-                    if (this.isBusy) {
-                        console.log("⚠️ Sync descartado: un guardado empezó durante el fetch");
+                    // 🔒 VERIFICACIÓN CRÍTICA: ¿cambió algo mientras hacíamos el fetch?
+                    if (this.localVersion !== versionAtStart) {
+                        console.log(`⏭️ Sync descartado: hubo cambios locales durante el fetch (v${versionAtStart} → v${this.localVersion})`);
+                        if (syncIcon) syncIcon.className = "fa-solid fa-shield-halved text-emerald-300";
+                        if (syncText) syncText.textContent = "Local protegido";
                         return;
                     }
 
+                    // Solo llegamos aquí si NO hubo cambios locales
                     if (data && typeof data.payments === 'object' && data.payments !== null) {
                         this.payments = data.payments;
                         this.savePayments();
@@ -515,12 +506,9 @@
                     console.warn('No se pudo sincronizar:', err);
                     if (syncIcon) syncIcon.className = "fa-solid fa-cloud text-emerald-300";
                     if (syncText) syncText.textContent = "Sheets (Offline)";
-                } finally {
-                    this.syncInProgress = false;
                 }
             }
 
-            // ✅ POST — bloquea el sync mientras está activo
             async sendToCloud() {
                 const syncIcon = document.getElementById('syncIcon');
                 const syncText = document.getElementById('syncStatusText');
@@ -534,11 +522,12 @@
                         body: JSON.stringify({
                             allPayments: this.payments,
                             allSchoolDeposits: this.schoolDeposits,
-                            timestamp: new Date().toISOString()
+                            timestamp: new Date().toISOString(),
+                            version: this.localVersion
                         })
                     });
                     const result = await response.json();
-                    console.log("✅ Guardado en Sheets:", result);
+                    console.log(`✅ Guardado en Sheets (v${this.localVersion}):`, result);
 
                     if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
                     if (syncText) syncText.textContent = "Guardado en Sheets";
@@ -689,7 +678,7 @@
                 document.getElementById('payVoucherInput').value = '';
             }
 
-            // ✅ CON CANDADO: bloquea el auto-sync durante todo el guardado
+            // ✅ SAVE: incrementa version ANTES de modificar datos
             async handleSavePayment(e) {
                 e.preventDefault();
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -704,27 +693,26 @@
                     return;
                 }
 
-                // 🔒 CERRAR EL CANDADO
-                this.isBusy = true;
+                const paymentObj = {
+                    amount: amount, date: date, notes: notes,
+                    voucherImg: this.tempVoucherBase64,
+                    updatedBy: 'Ricardo Cruz',
+                    timestamp: new Date().toISOString()
+                };
 
-                try {
-                    const paymentObj = {
-                        amount: amount, date: date, notes: notes,
-                        voucherImg: this.tempVoucherBase64,
-                        updatedBy: 'Ricardo Cruz',
-                        timestamp: new Date().toISOString()
-                    };
+                // 🔒 INCREMENTAMOS LA VERSIÓN ANTES de tocar los datos
+                // Esto hace que cualquier sync en camino sea descartado
+                this.localVersion++;
+                console.log(`📝 Guardando local (v${this.localVersion})`);
 
-                    this.setPayment(brotherId, this.selectedYear, monthIdx, paymentObj);
-                    this.closeModal('paymentModal');
-                    this.renderAll();
+                this.setPayment(brotherId, this.selectedYear, monthIdx, paymentObj);
+                this.closeModal('paymentModal');
+                this.renderAll();
 
-                    await this.sendToCloud();
-                    // NO hacemos syncFromCloud aquí — acabamos de subir, nuestros datos son los correctos
-                } finally {
-                    // 🔓 ABRIR EL CANDADO
-                    this.isBusy = false;
-                }
+                // POST al cloud — el sync en camino ya está "marcado" como obsoleto
+                await this.sendToCloud();
+
+                console.log(`✅ Guardado completado (v${this.localVersion})`);
             }
 
             async deletePaymentRecord() {
@@ -735,15 +723,11 @@
                 const monthName = MONTH_NAMES[monthIdx];
 
                 if (confirm(`¿Está seguro de ELIMINAR el registro de pago de ${brother.name} correspondiente a ${monthName} ${this.selectedYear}?`)) {
-                    this.isBusy = true;
-                    try {
-                        this.setPayment(brotherId, this.selectedYear, monthIdx, null);
-                        this.closeModal('paymentModal');
-                        this.renderAll();
-                        await this.sendToCloud();
-                    } finally {
-                        this.isBusy = false;
-                    }
+                    this.localVersion++;
+                    this.setPayment(brotherId, this.selectedYear, monthIdx, null);
+                    this.closeModal('paymentModal');
+                    this.renderAll();
+                    await this.sendToCloud();
                 }
             }
 
@@ -810,34 +794,27 @@
                 const ref = document.getElementById('schoolRef').value;
                 const notes = document.getElementById('schoolNotes').value;
 
-                this.isBusy = true;
-                try {
-                    const newDeposit = {
-                        id: 'sch_' + Date.now(), amount, date, bank, ref, notes,
-                        voucherImg: this.tempSchoolVoucherBase64
-                    };
-                    this.schoolDeposits.unshift(newDeposit);
-                    this.saveSchoolDeposits();
-                    this.closeModal('schoolModal');
-                    this.renderAll();
-                    await this.sendToCloud();
-                } finally {
-                    this.isBusy = false;
-                }
+                const newDeposit = {
+                    id: 'sch_' + Date.now(), amount, date, bank, ref, notes,
+                    voucherImg: this.tempSchoolVoucherBase64
+                };
+
+                this.localVersion++;  // 🔒
+                this.schoolDeposits.unshift(newDeposit);
+                this.saveSchoolDeposits();
+                this.closeModal('schoolModal');
+                this.renderAll();
+                await this.sendToCloud();
             }
 
             async deleteSchoolDeposit(depositId) {
                 if (!this.isAdmin) return;
                 if (confirm("¿Desea eliminar este registro de depósito bancario a la escuela?")) {
-                    this.isBusy = true;
-                    try {
-                        this.schoolDeposits = this.schoolDeposits.filter(d => d.id !== depositId);
-                        this.saveSchoolDeposits();
-                        this.renderAll();
-                        await this.sendToCloud();
-                    } finally {
-                        this.isBusy = false;
-                    }
+                    this.localVersion++;  // 🔒
+                    this.schoolDeposits = this.schoolDeposits.filter(d => d.id !== depositId);
+                    this.saveSchoolDeposits();
+                    this.renderAll();
+                    await this.sendToCloud();
                 }
             }
 
