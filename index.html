@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Cuotas IHSS Madre</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -16,52 +13,28 @@
                 extend: {
                     colors: {
                         emerald: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            200: '#a7f3d0',
-                            300: '#6ee7b7',
-                            400: '#34d399',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
-                            950: '#022c22',
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+                            400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+                            800: '#065f46', 900: '#064e3b', 950: '#022c22',
                         }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 6px;
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Header / Navbar -->
     <header class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-800 text-white shadow-xl sticky top-0 z-30 border-b border-emerald-700/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                
-                <!-- Logo & App Information -->
                 <div class="flex items-center space-x-3">
                     <div class="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
                         <i class="fa-solid fa-file-invoice-dollar text-2xl sm:text-3xl text-emerald-300"></i>
@@ -77,34 +50,27 @@
                     </div>
                 </div>
 
-                <!-- Control Block: Action Buttons & Year Selector -->
                 <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
-                    
-                    <!-- 1. Botón Ingresar Clave / Admin Active -->
                     <button id="adminStatusBtn" onclick="app.toggleAdminAuth()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95">
                         <i class="fa-solid fa-key text-emerald-300"></i>
                         <span id="adminBtnText">Ingresar Clave</span>
                     </button>
 
-                    <!-- 1.5 Botón Sincronizar Google Sheets -->
                     <button id="syncBtn" onclick="app.syncFromCloud()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95" title="Sincronizar con Google Sheets">
                         <i id="syncIcon" class="fa-solid fa-cloud-arrow-down text-emerald-300"></i>
                         <span id="syncStatusText">Sincronizar</span>
                     </button>
 
-                    <!-- 2. Botón Cambiar Contraseña -->
                     <button id="changePassBtn" onclick="app.openChangePassModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
                         <i class="fa-solid fa-lock-rotate text-emerald-300"></i>
                         <span>Cambiar Contraseña</span>
                     </button>
 
-                    <!-- 3. Botón Registrar Pagos -->
                     <button id="mainRegisterPayBtn" onclick="app.openPaymentModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all shadow-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border border-emerald-200 cursor-pointer active:scale-95">
                         <i class="fa-solid fa-circle-plus text-base"></i>
                         <span>Registrar Pagos</span>
                     </button>
 
-                    <!-- 4. Selector / Botón de Año -->
                     <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
                         <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
                         <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año:</span>
@@ -116,7 +82,6 @@
                             <option value="2023" class="text-slate-900">2023</option>
                         </select>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -124,7 +89,6 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
 
-        <!-- Read Only Alert Banner -->
         <div id="readOnlyBanner" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div class="flex items-center space-x-3">
                 <div class="p-2 bg-amber-100 rounded-lg text-amber-700">
@@ -140,9 +104,7 @@
             </button>
         </div>
 
-        <!-- Metric Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
                 <div>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Meta Anual (5 Hermanos)</p>
@@ -186,10 +148,8 @@
                     <i class="fa-solid fa-building-columns text-xl"></i>
                 </div>
             </div>
-
         </div>
 
-        <!-- Section: Monthly Contributions Table -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-5 sm:p-6 bg-slate-50/70 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -199,7 +159,6 @@
                     </h2>
                     <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por cada hermano. Presione en un mes para ver o editar el comprobante.</p>
                 </div>
-
                 <div class="flex items-center gap-2">
                     <button onclick="app.openPaymentModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition shadow flex items-center gap-1.5">
                         <i class="fa-solid fa-plus-circle"></i>
@@ -208,7 +167,6 @@
                 </div>
             </div>
 
-            <!-- Table Matrix Container -->
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[900px]">
                     <thead>
@@ -229,14 +187,11 @@
                             <th class="py-3 px-4 text-right">Total Año</th>
                         </tr>
                     </thead>
-                    <tbody id="brothersMatrixBody" class="divide-y divide-slate-100 text-xs font-medium">
-                        <!-- Populated by JavaScript -->
-                    </tbody>
+                    <tbody id="brothersMatrixBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Section: Depositos a la escuela Proverbios 22:6 -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-5 sm:p-6 bg-emerald-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -250,7 +205,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="flex items-center gap-3">
                     <button onclick="app.openSchoolDepositModal()" class="admin-only hidden bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-file-circle-plus"></i>
@@ -258,17 +212,13 @@
                     </button>
                 </div>
             </div>
-
             <div class="p-5 sm:p-6 bg-slate-50/30">
-                <div id="schoolDepositsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Populated dynamically -->
-                </div>
+                <div id="schoolDepositsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </div>
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
             <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span></p>
@@ -276,7 +226,7 @@
         </div>
     </footer>
 
-    <!-- MODAL: LOGIN / INGRESA CLAVE -->
+    <!-- MODAL: LOGIN -->
     <div id="loginModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transform transition-all">
             <div class="p-6 bg-emerald-900 text-white text-center relative">
@@ -363,7 +313,6 @@
             </div>
 
             <form onsubmit="app.handleSavePayment(event)" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
-                
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Hermano Aportante</label>
@@ -375,7 +324,6 @@
                             <option value="5">5.- Cristopher</option>
                         </select>
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mes de Aportación</label>
                         <select id="payMonthIdx" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold">
@@ -401,7 +349,6 @@
                         <input type="number" id="payAmount" required min="1" step="0.01" value="330" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-bold text-emerald-800">
                         <p class="text-[10px] text-slate-400 mt-1">Cuota fija base: L. 330.00</p>
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha de Pago</label>
                         <input type="date" id="payDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
@@ -411,7 +358,6 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Imagen del Voucher / Comprobante WhatsApp</label>
                     <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    
                     <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                         <img id="voucherPreviewImg" src="" alt="Voucher Preview" class="max-h-48 mx-auto object-contain py-2">
                         <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow hover:bg-red-700">
@@ -425,7 +371,6 @@
                     <input type="text" id="payNotes" placeholder="Ej. Pago adelantado, transferencia por Ficohsa..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
                 </div>
 
-                <!-- Direct WhatsApp notification triggers in modal -->
                 <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
                     <p class="text-[11px] font-bold text-emerald-900 uppercase">Notificaciones por WhatsApp</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -442,7 +387,6 @@
                     <button type="button" id="btnDeletePayment" onclick="app.deletePaymentRecord()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3.5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5">
                         <i class="fa-solid fa-trash-can"></i> Eliminar
                     </button>
-
                     <div class="flex items-center gap-2">
                         <button type="button" onclick="app.closeModal('paymentModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
                         <button type="submit" id="btnSavePaymentSubmit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar Registro</button>
@@ -452,7 +396,7 @@
         </div>
     </div>
 
-    <!-- MODAL: REGISTRAR DEPOSITO A ESCUELA PROVERBIOS 22:6 -->
+    <!-- MODAL: DEPOSITO ESCUELA -->
     <div id="schoolModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100">
             <div class="p-5 bg-emerald-950 text-white flex items-center justify-between">
@@ -469,7 +413,6 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <form onsubmit="app.handleSaveSchoolDeposit(event)" class="p-6 space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -481,7 +424,6 @@
                         <input type="date" id="schoolDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                 </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banco Destino</label>
@@ -492,21 +434,17 @@
                         <input type="text" id="schoolRef" placeholder="Ej. #REF-884920" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante Bancario</label>
                     <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    
                     <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                         <img id="schoolVoucherPreviewImg" src="" alt="Deposit Preview" class="max-h-40 mx-auto object-contain py-2">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Detalles / Nota Adicional</label>
                     <input type="text" id="schoolNotes" placeholder="Ej. Aportaciones acumuladas de Enero..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
                 </div>
-
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                     <button type="button" onclick="app.closeModal('schoolModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
                     <button type="submit" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar Depósito</button>
@@ -515,7 +453,7 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX: IMAGE VIEWER MODAL -->
+    <!-- LIGHTBOX -->
     <div id="imageLightboxModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden" onclick="app.closeModal('imageLightboxModal')">
         <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
             <button onclick="app.closeModal('imageLightboxModal')" class="absolute -top-10 right-0 text-white text-3xl hover:text-emerald-400 font-bold">
@@ -526,9 +464,7 @@
         </div>
     </div>
 
-    <!-- APPLICATION JAVASCRIPT LOGIC -->
     <script>
-        // Constant Data for Brothers and Phone Numbers
         const BROTHERS = [
             { id: 1, name: "Jose", phone: "+50488029422", displayPhone: "+504 88029422" },
             { id: 2, name: "Oscar", phone: "+50433896279", displayPhone: "+504 33896279" },
@@ -538,16 +474,14 @@
         ];
 
         const MONTH_NAMES = [
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
         ];
 
         const BASE_FEE = 330;
 
-        // Endpoint del Google Apps Script
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJbSnIuJ6q1T0UxY5kfQ9ciNlV7-GzyfeKhOvAGxea0bVGOAP9vlvan6UaCpZey_oYag/exec";
 
-        // Main App Controller
         class IHSSApp {
             constructor() {
                 this.selectedYear = "2026";
@@ -556,11 +490,9 @@
                 this.tempVoucherBase64 = null;
                 this.tempSchoolVoucherBase64 = null;
 
-                // Storage keys
                 this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
                 this.STORAGE_KEY_SCHOOL = 'ihss_school_deposits_v2';
 
-                // Load initial state
                 this.payments = this.loadPayments();
                 this.schoolDeposits = this.loadSchoolDeposits();
             }
@@ -574,11 +506,13 @@
                 document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
 
+                // Sincronizar al abrir (obligatorio)
                 await this.syncFromCloud();
 
+                // ✅ ARREGLO: Refrescar para TODOS cada 15 segundos (admin y lectores)
                 setInterval(() => {
-                    if (!this.isAdmin) this.syncFromCloud();
-                }, 30000);
+                    this.syncFromCloud();
+                }, 15000);
             }
 
             // ====== SINCRONIZACIÓN CON GOOGLE SHEETS ======
@@ -589,7 +523,10 @@
                 if (syncText) syncText.textContent = "Sincronizando...";
 
                 try {
-                    const response = await fetch(`${APPS_SCRIPT_URL}?t=${Date.now()}`);
+                    const response = await fetch(`${APPS_SCRIPT_URL}?t=${Date.now()}`, {
+                        method: 'GET',
+                        cache: 'no-store'
+                    });
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     const data = await response.json();
 
@@ -645,21 +582,17 @@
                 const data = localStorage.getItem(this.STORAGE_KEY_PAYMENTS);
                 return data ? JSON.parse(data) : {};
             }
-
             savePayments() {
                 localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments));
             }
-
             loadSchoolDeposits() {
                 const data = localStorage.getItem(this.STORAGE_KEY_SCHOOL);
                 return data ? JSON.parse(data) : [];
             }
-
             saveSchoolDeposits() {
                 localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits));
             }
 
-            // Year selector handling
             changeYear(year) {
                 this.selectedYear = year;
                 document.querySelectorAll('.currentYearLabel').forEach(el => el.textContent = year);
@@ -667,7 +600,7 @@
                 this.syncFromCloud();
             }
 
-            // Authentication logic
+            // Authentication
             toggleAdminAuth() {
                 if (this.isAdmin) {
                     if (confirm("¿Desea cerrar la sesión de administrador?")) {
@@ -718,7 +651,6 @@
                     msgEl.classList.remove('hidden');
                     return;
                 }
-
                 if (newPass !== confirmPass) {
                     msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
                     msgEl.textContent = "Las nuevas contraseñas no coinciden.";
@@ -733,9 +665,7 @@
                 msgEl.textContent = "¡Contraseña actualizada con éxito!";
                 msgEl.classList.remove('hidden');
 
-                setTimeout(() => {
-                    this.closeModal('changePassModal');
-                }, 1200);
+                setTimeout(() => { this.closeModal('changePassModal'); }, 1200);
             }
 
             updateAdminUI() {
@@ -763,13 +693,13 @@
                 document.getElementById(modalId).classList.add('hidden');
             }
 
-            // Payments Modal Actions
+            // Payments
             openPaymentModal(brotherId = 1, monthIdx = new Date().getMonth()) {
                 document.getElementById('payBrotherId').value = brotherId;
                 document.getElementById('payMonthIdx').value = monthIdx;
-                
+
                 const record = this.getPayment(brotherId, this.selectedYear, monthIdx);
-                
+
                 if (record) {
                     document.getElementById('payAmount').value = record.amount || BASE_FEE;
                     document.getElementById('payDate').value = record.date || new Date().toISOString().split('T')[0];
@@ -815,7 +745,8 @@
                 document.getElementById('payVoucherInput').value = '';
             }
 
-            handleSavePayment(e) {
+            // ✅ ARREGLO: async + await sendToCloud + await syncFromCloud
+            async handleSavePayment(e) {
                 e.preventDefault();
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
@@ -841,10 +772,13 @@
                 this.setPayment(brotherId, this.selectedYear, monthIdx, paymentObj);
                 this.closeModal('paymentModal');
                 this.renderAll();
-                this.sendToCloud();
+
+                await this.sendToCloud();
+                await this.syncFromCloud();
             }
 
-            deletePaymentRecord() {
+            // ✅ ARREGLO: async + await
+            async deletePaymentRecord() {
                 if (!this.isAdmin) {
                     alert("Atención: Solo el administrador con clave puede eliminar este registro.");
                     return;
@@ -859,7 +793,8 @@
                     this.setPayment(brotherId, this.selectedYear, monthIdx, null);
                     this.closeModal('paymentModal');
                     this.renderAll();
-                    this.sendToCloud();
+                    await this.sendToCloud();
+                    await this.syncFromCloud();
                 }
             }
 
@@ -878,48 +813,25 @@
                 this.savePayments();
             }
 
-            // WhatsApp Integration Functions
+            // WhatsApp
             sendWhatsAppDirectReceipt() {
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
                 const amount = document.getElementById('payAmount').value;
                 const brother = BROTHERS.find(b => b.id === brotherId);
-
                 const message = `Hola *${brother.name}*, recibas un cordial saludo. Se ha registrado correctamente tu pago de *L. ${amount}.00* correspondiente a la cuota IHSS de nuestra madre para el mes de *${MONTH_NAMES[monthIdx]} ${this.selectedYear}*. Muchas gracias por tu valiosa colaboración. (Atte: Ricardo Cruz)`;
-                
-                const url = `https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-                window.open(url, '_blank');
+                window.open(`https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank');
             }
 
             sendWhatsAppDirectReminder() {
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
                 const brother = BROTHERS.find(b => b.id === brotherId);
-
                 const message = `Hola *${brother.name}*, espero te encuentres muy bien. Te comparto un recordatorio sobre la cuota mensual del IHSS de nuestra madre correspondiente a *${MONTH_NAMES[monthIdx]} ${this.selectedYear}* (Monto: L. 330.00). Si ya realizaste la aportación, por favor envíame la foto del comprobante para registrarlo. ¡Muchas gracias! (Atte: Ricardo Cruz)`;
-                
-                const url = `https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-                window.open(url, '_blank');
+                window.open(`https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank');
             }
 
-            sendWhatsAppReceipt(brotherId, monthIdx) {
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const record = this.getPayment(brotherId, this.selectedYear, monthIdx);
-                const amount = record ? record.amount : BASE_FEE;
-
-                const message = `Hola *${brother.name}*, confirmamos la recepción de tu aportación de *L. ${amount}.00* para la cuota IHSS de nuestra madre del mes de *${MONTH_NAMES[monthIdx]} ${this.selectedYear}*. ¡Bendiciones! (Administrador: Ricardo Cruz)`;
-                const url = `https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-                window.open(url, '_blank');
-            }
-
-            sendWhatsAppReminder(brotherId, monthIdx) {
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const message = `Hola *${brother.name}*, un saludo fraterno. Te recordamos que la aportación del IHSS de nuestra madre para *${MONTH_NAMES[monthIdx]} ${this.selectedYear}* (L. 330.00) está pendiente. Por favor nos confirmas cuando tengas el comprobante. Gracias. (Ricardo Cruz)`;
-                const url = `https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-                window.open(url, '_blank');
-            }
-
-            // School Deposits Management
+            // School Deposits
             openSchoolDepositModal() {
                 if (!this.isAdmin) {
                     alert("Requiere ingresar la clave de administrador para registrar depósitos bancarios.");
@@ -934,7 +846,6 @@
                 document.getElementById('schoolVoucherPreviewImg').src = '';
                 document.getElementById('schoolVoucherPreviewContainer').classList.add('hidden');
                 document.getElementById('schoolVoucherInput').value = '';
-
                 document.getElementById('schoolModal').classList.remove('hidden');
             }
 
@@ -951,7 +862,8 @@
                 }
             }
 
-            handleSaveSchoolDeposit(e) {
+            // ✅ ARREGLO: async + await
+            async handleSaveSchoolDeposit(e) {
                 e.preventDefault();
                 const amount = parseFloat(document.getElementById('schoolAmount').value);
                 const date = document.getElementById('schoolDate').value;
@@ -973,20 +885,23 @@
                 this.saveSchoolDeposits();
                 this.closeModal('schoolModal');
                 this.renderAll();
-                this.sendToCloud();
+
+                await this.sendToCloud();
+                await this.syncFromCloud();
             }
 
-            deleteSchoolDeposit(depositId) {
+            // ✅ ARREGLO: async + await
+            async deleteSchoolDeposit(depositId) {
                 if (!this.isAdmin) return;
                 if (confirm("¿Desea eliminar este registro de depósito bancario a la escuela?")) {
                     this.schoolDeposits = this.schoolDeposits.filter(d => d.id !== depositId);
                     this.saveSchoolDeposits();
                     this.renderAll();
-                    this.sendToCloud();
+                    await this.sendToCloud();
+                    await this.syncFromCloud();
                 }
             }
 
-            // Lightbox Modal
             openLightbox(imgSrc, caption = '') {
                 if (!imgSrc) return;
                 document.getElementById('lightboxImg').src = imgSrc;
@@ -994,7 +909,7 @@
                 document.getElementById('imageLightboxModal').classList.remove('hidden');
             }
 
-            // Rendering Engine
+            // Rendering
             renderAll() {
                 this.renderMatrix();
                 this.renderKPIs();
@@ -1005,14 +920,12 @@
                 const tbody = document.getElementById('brothersMatrixBody');
                 tbody.innerHTML = '';
 
-                let grandTotalYear = 0;
-
                 BROTHERS.forEach(brother => {
                     let brotherYearTotal = 0;
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
-                    let brotherTd = `
+                    const brotherTd = `
                         <td class="py-3 px-4 bg-slate-50/50 sticky left-0 border-r border-slate-200">
                             <div class="font-bold text-slate-800 text-sm flex items-center justify-between">
                                 <span>${brother.id}.- ${brother.name}</span>
@@ -1033,8 +946,6 @@
 
                         if (rec) {
                             brotherYearTotal += rec.amount;
-                            grandTotalYear += rec.amount;
-
                             const hasVoucher = !!rec.voucherImg;
 
                             cellContent = `
@@ -1079,9 +990,7 @@
                         const rec = this.getPayment(b.id, this.selectedYear, m);
                         if (rec) {
                             totalCollectedYear += rec.amount;
-                            if (m === currentMonthIdx) {
-                                currentMonthPaidCount++;
-                            }
+                            if (m === currentMonthIdx) currentMonthPaidCount++;
                         }
                     }
                 });
@@ -1092,7 +1001,6 @@
                 document.getElementById('kpiTotalExpected').textContent = `L. ${expectedAnnual.toLocaleString('es-HN')}.00`;
                 document.getElementById('kpiTotalCollected').textContent = `L. ${totalCollectedYear.toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
                 document.getElementById('kpiCollectionPercent').textContent = `${percent}% de la meta anual`;
-                
                 document.getElementById('kpiCurrentMonthStatus').textContent = `${currentMonthPaidCount} / 5`;
                 document.getElementById('kpiMonthName').textContent = `Hermanos al día en ${MONTH_NAMES[currentMonthIdx]}`;
 
@@ -1118,7 +1026,6 @@
                 this.schoolDeposits.forEach(deposit => {
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:shadow-md transition relative group";
-
                     const hasImage = !!deposit.voucherImg;
 
                     card.innerHTML = `
@@ -1129,22 +1036,18 @@
                                 </span>
                                 <span class="text-xs text-slate-400 font-medium">${deposit.date}</span>
                             </div>
-
                             <p class="text-2xl font-black text-slate-900 mb-1">
                                 L. ${parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 })}
                             </p>
-
                             ${deposit.ref ? `<p class="text-xs text-slate-500 font-mono mb-2"><i class="fa-solid fa-receipt mr-1"></i>Ref: ${deposit.ref}</p>` : ''}
                             ${deposit.notes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mb-3 border border-slate-100">${deposit.notes}</p>` : ''}
                         </div>
-
                         <div class="pt-2 border-t border-slate-100 flex items-center justify-between mt-2">
                             ${hasImage ? `
                                 <button onclick="app.openLightbox('${deposit.voucherImg}', 'Depósito Bancario: L. ${deposit.amount} - ${deposit.bank}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 border border-emerald-200">
                                     <i class="fa-solid fa-image text-emerald-600"></i> Ver Comprobante
                                 </button>
                             ` : '<span class="text-[11px] text-slate-400 italic">Sin comprobante adjunto</span>'}
-
                             ${this.isAdmin ? `
                                 <button onclick="app.deleteSchoolDeposit('${deposit.id}')" class="text-red-500 hover:text-red-700 text-xs p-1.5 rounded-lg hover:bg-red-50 transition" title="Eliminar depósito">
                                     <i class="fa-solid fa-trash-can"></i>
@@ -1152,13 +1055,11 @@
                             ` : ''}
                         </div>
                     `;
-
                     container.appendChild(card);
                 });
             }
         }
 
-        // Initialize Application instance on DOM Ready
         let app;
         window.addEventListener('DOMContentLoaded', () => {
             app = new IHSSApp();
