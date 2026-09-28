@@ -441,7 +441,7 @@
 
         const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
         const BASE_FEE = 330;
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLdexKysJKOJD4hJvJgL_8siSAosWKZmnA5a1gq85Cnac2S4z-MdjMz3DalsAxq1znSA/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBot1zQ7tbkE_PYYLSL2ndzSEOPyfNdsSglYOiuqV8Rvdbyd40oV6AkVA/exec";
 
         class IHSSApp {
             constructor() {
@@ -499,7 +499,7 @@
                         return;
                     }
 
-                    // ✅ MERGE: solo agregar/actualizar entradas del server, sin borrar locales
+                    // Merge sin borrar locales
                     if (data && data.payments && typeof data.payments === 'object') {
                         const merged = {};
                         for (const k in this.payments) merged[k] = this.payments[k];
@@ -530,7 +530,6 @@
                 }
             }
 
-            // ✅ FIX: ya NO sobreescribe payments/schoolDeposits con la respuesta del server
             async sendAction(payload) {
                 const syncIcon = document.getElementById('syncIcon');
                 const syncText = document.getElementById('syncStatusText');
@@ -719,7 +718,7 @@
                 document.getElementById('payVoucherInput').value = '';
             }
 
-            // ✅ FIX: después de guardar, actualiza el URL del voucher del servidor
+            // ✅ FIX: usa result.savedPayment para obtener el voucherUrl
             async handleSavePayment(e) {
                 e.preventDefault();
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -757,14 +756,13 @@
                     data: paymentObj
                 });
 
-                // ✅ Si el servidor devolvió la URL del voucher, actualizarla localmente
-                if (result && result.payments && result.payments[key]) {
-                    const srv = result.payments[key];
-                    if (srv.voucherImg && srv.voucherImg.indexOf("http") === 0 && this.payments[key]) {
-                        this.payments[key].voucherImg = srv.voucherImg;
+                // ✅ Usar el objeto devuelto directamente (fix principal)
+                if (result && result.savedPayment && result.savedPayment.voucherImg) {
+                    if (this.payments[key]) {
+                        this.payments[key].voucherImg = result.savedPayment.voucherImg;
                         this.savePayments();
                         this.renderAll();
-                        console.log("✅ Voucher URL actualizada localmente desde el servidor");
+                        console.log("✅ Voucher URL actualizada:", result.savedPayment.voucherImg);
                     }
                 }
             }
@@ -925,7 +923,6 @@
                 reader.readAsDataURL(file);
             }
 
-            // ✅ FIX: guardar depósito + actualizar voucher URL del servidor + WhatsApp con link
             async handleSaveSchoolDeposit(e) {
                 e.preventDefault();
                 const amount = parseFloat(document.getElementById('schoolAmount').value);
@@ -950,7 +947,6 @@
 
                 const result = await this.sendAction({ action: "saveSchool", data: newDeposit });
 
-                // ✅ Actualizar URL del voucher en local + objeto para WhatsApp
                 let savedDeposit = newDeposit;
                 if (result && result.savedSchool && result.savedSchool.voucherImg) {
                     const idx = this.schoolDeposits.findIndex(d => d.id === newDeposit.id);
