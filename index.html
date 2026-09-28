@@ -224,7 +224,7 @@
                         <input type="password" id="loginPassInput" required placeholder="Ingrese contraseña..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
                         <i class="fa-solid fa-key text-slate-400 absolute left-3.5 top-3.5 text-sm"></i>
                     </div>
-                    <p class="text-[11px] text-slate-400 mt-1">Clave inicial predeterminada: <code class="bg-slate-100 px-1 py-0.5 rounded text-emerald-700 font-bold">admin123</code></p>
+                    <p class="text-[11px] text-slate-400 mt-1">Solo el administrador autorizado conoce la clave.</p>
                 </div>
                 <div id="loginError" class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 text-center font-semibold">
                     <i class="fa-solid fa-circle-exclamation mr-1"></i> Contraseña incorrecta. Intente de nuevo.
@@ -255,7 +255,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nueva Contraseña</label>
-                    <input type="password" id="newPassInput" required minlength="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                    <input type="password" id="newPassInput" required minlength="8" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                    <p class="text-[10px] text-slate-400 mt-1">Mínimo 8 caracteres. Se recomienda mezclar mayúsculas, números y símbolos.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Confirmar Nueva Contraseña</label>
@@ -319,6 +320,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Imagen del Voucher / Comprobante WhatsApp</label>
                     <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Tamaño máximo permitido: 5 MB</p>
                     <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                         <img id="voucherPreviewImg" src="" alt="Voucher Preview" class="max-h-48 mx-auto object-contain py-2">
                         <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow hover:bg-red-700">
@@ -330,13 +332,14 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observaciones / Notas (Opcional)</label>
                     <input type="text" id="payNotes" placeholder="Ej. Pago adelantado..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
                 </div>
-                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
+                <!-- 🔒 WhatsApp: solo para admins -->
+                <div class="admin-only hidden bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
                     <p class="text-[11px] font-bold text-emerald-900 uppercase">Notificaciones por WhatsApp</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button type="button" onclick="app.sendWhatsAppDirectReceipt()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <button type="button" onclick="app.sendWhatsAppConfirmation()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i class="fa-brands fa-whatsapp text-sm"></i> Confirmar Pago
                         </button>
-                        <button type="button" onclick="app.sendWhatsAppDirectReminder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <button type="button" onclick="app.sendWhatsAppReminder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
                             <i class="fa-brands fa-whatsapp text-sm"></i> Recordatorio
                         </button>
                     </div>
@@ -381,7 +384,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banco Destino</label>
-                        <input type="text" id="schoolBank" required placeholder="Ej. Banco Atlántida / Ficohsa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <input type="text" id="schoolBank" required value="Banpaís" placeholder="Ej. Banpaís" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nº Comprobante / Referencia</label>
@@ -391,17 +394,22 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante Bancario</label>
                     <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Tamaño máximo permitido: 5 MB</p>
                     <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                         <img id="schoolVoucherPreviewImg" src="" alt="Deposit Preview" class="max-h-40 mx-auto object-contain py-2">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Detalles / Nota Adicional</label>
-                    <input type="text" id="schoolNotes" placeholder="Ej. Aportaciones acumuladas de Enero..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
+                    <input type="text" id="schoolNotes" placeholder="Ej. Aportaciones acumuladas de Septiembre..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
+                </div>
+                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 text-xs text-emerald-900">
+                    <i class="fa-brands fa-whatsapp text-emerald-700 mr-1"></i>
+                    Al guardar, se abrirá WhatsApp automáticamente para avisar a <strong>Nadia</strong>.
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                     <button type="button" onclick="app.closeModal('schoolModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
-                    <button type="submit" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar Depósito</button>
+                    <button type="submit" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar y Avisar</button>
                 </div>
             </form>
         </div>
@@ -425,19 +433,28 @@
             { id: 5, name: "Cristopher", phone: "+50431809663", displayPhone: "+504 31809663" }
         ];
 
+        // 📱 Teléfono de Nadia (receptora de depósitos a la escuela)
+        const NADIA_PHONE = "+50498124228";
+
+        // 🔐 Contraseña por defecto ofuscada (no en texto plano)
+        const _pc = [73,72,83,83,109,97,100,114,101,50,48,50,54,33,82,120];
+        const DEFAULT_ADMIN_PASSWORD = String.fromCharCode.apply(null, _pc);
+
+        // ⚠️ Límite de tamaño de imagen: 5 MB
+        const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
         const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
         const BASE_FEE = 330;
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJbSnIuJ6q1T0UxY5kfQ9ciNlV7-GzyfeKhOvAGxea0bVGOAP9vlvan6UaCpZey_oYag/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLdexKysJKOJD4hJvJgL_8siSAosWKZmnA5a1gq85Cnac2S4z-MdjMz3DalsAxq1znSA/exec";
 
         class IHSSApp {
             constructor() {
                 this.selectedYear = "2026";
                 this.isAdmin = false;
-                this.adminPassword = localStorage.getItem('ihss_admin_pass') || 'admin123';
+                this.adminPassword = localStorage.getItem('ihss_admin_pass') || DEFAULT_ADMIN_PASSWORD;
                 this.tempVoucherBase64 = null;
                 this.tempSchoolVoucherBase64 = null;
 
-                // ✅ LA CLAVE DEL FIX: contador de versión local
                 this.localVersion = 0;
 
                 this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
@@ -458,14 +475,13 @@
 
                 await this.syncFromCloud();
 
+                // 🔄 Sync cada 60 segundos
                 setInterval(() => {
                     this.syncFromCloud();
-                }, 15000);
+                }, 60000);
             }
 
-            // ✅ GET con verificación de versión
             async syncFromCloud() {
-                // 🔒 Capturamos la versión al MOMENTO de empezar el fetch
                 const versionAtStart = this.localVersion;
 
                 const syncIcon = document.getElementById('syncIcon');
@@ -474,22 +490,20 @@
                 if (syncText) syncText.textContent = "Sincronizando...";
 
                 try {
-                    const response = await fetch(`${APPS_SCRIPT_URL}?t=${Date.now()}`, {
+                    const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
                         method: 'GET',
                         cache: 'no-store'
                     });
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     const data = await response.json();
 
-                    // 🔒 VERIFICACIÓN CRÍTICA: ¿cambió algo mientras hacíamos el fetch?
                     if (this.localVersion !== versionAtStart) {
-                        console.log(`⏭️ Sync descartado: hubo cambios locales durante el fetch (v${versionAtStart} → v${this.localVersion})`);
+                        console.log("⏭️ Sync descartado (v" + versionAtStart + " → v" + this.localVersion + ")");
                         if (syncIcon) syncIcon.className = "fa-solid fa-shield-halved text-emerald-300";
                         if (syncText) syncText.textContent = "Local protegido";
                         return;
                     }
 
-                    // Solo llegamos aquí si NO hubo cambios locales
                     if (data && typeof data.payments === 'object' && data.payments !== null) {
                         this.payments = data.payments;
                         this.savePayments();
@@ -509,7 +523,7 @@
                 }
             }
 
-            async sendToCloud() {
+            async sendAction(payload) {
                 const syncIcon = document.getElementById('syncIcon');
                 const syncText = document.getElementById('syncStatusText');
                 if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
@@ -519,22 +533,35 @@
                     const response = await fetch(APPS_SCRIPT_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({
-                            allPayments: this.payments,
-                            allSchoolDeposits: this.schoolDeposits,
-                            timestamp: new Date().toISOString(),
-                            version: this.localVersion
-                        })
+                        body: JSON.stringify(payload)
                     });
                     const result = await response.json();
-                    console.log(`✅ Guardado en Sheets (v${this.localVersion}):`, result);
+                    console.log("✅ Respuesta del servidor:", result);
 
-                    if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
-                    if (syncText) syncText.textContent = "Guardado en Sheets";
+                    if (result.status === "success") {
+                        if (result.payments) {
+                            this.payments = result.payments;
+                            this.savePayments();
+                        }
+                        if (result.schoolDeposits) {
+                            this.schoolDeposits = result.schoolDeposits;
+                            this.saveSchoolDeposits();
+                        }
+                        this.renderAll();
+                        if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
+                        if (syncText) syncText.textContent = "Guardado en Sheets";
+                        return result;
+                    } else {
+                        console.error("Error del servidor:", result.message);
+                        if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
+                        if (syncText) syncText.textContent = "Error: " + (result.message || "desconocido");
+                        return null;
+                    }
                 } catch (err) {
                     console.error('Error enviando a Sheets:', err);
                     if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
                     if (syncText) syncText.textContent = "Error al guardar";
+                    return null;
                 }
             }
 
@@ -596,6 +623,12 @@
                     msgEl.classList.remove('hidden');
                     return;
                 }
+                if (newPass.length < 8) {
+                    msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
+                    msgEl.textContent = "La nueva contraseña debe tener al menos 8 caracteres.";
+                    msgEl.classList.remove('hidden');
+                    return;
+                }
                 if (newPass !== confirmPass) {
                     msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
                     msgEl.textContent = "Las nuevas contraseñas no coinciden.";
@@ -632,7 +665,10 @@
 
             closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
 
-            openPaymentModal(brotherId = 1, monthIdx = new Date().getMonth()) {
+            openPaymentModal(brotherId, monthIdx) {
+                if (typeof brotherId === "undefined") brotherId = 1;
+                if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
+
                 document.getElementById('payBrotherId').value = brotherId;
                 document.getElementById('payMonthIdx').value = monthIdx;
                 const record = this.getPayment(brotherId, this.selectedYear, monthIdx);
@@ -660,15 +696,21 @@
 
             handleVoucherPreview(e) {
                 const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (evt) => {
-                        this.tempVoucherBase64 = evt.target.result;
-                        document.getElementById('voucherPreviewImg').src = this.tempVoucherBase64;
-                        document.getElementById('voucherPreviewContainer').classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
+                if (!file) return;
+
+                if (file.size > MAX_IMAGE_SIZE) {
+                    alert("La imagen es demasiado grande.\n\nTamaño actual: " + (file.size / 1024 / 1024).toFixed(2) + " MB\nMáximo permitido: 5 MB\n\nPor favor, comprime la imagen o toma una captura más ligera.");
+                    e.target.value = '';
+                    return;
                 }
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    this.tempVoucherBase64 = evt.target.result;
+                    document.getElementById('voucherPreviewImg').src = this.tempVoucherBase64;
+                    document.getElementById('voucherPreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
             }
 
             removeVoucherPreview() {
@@ -678,7 +720,6 @@
                 document.getElementById('payVoucherInput').value = '';
             }
 
-            // ✅ SAVE: incrementa version ANTES de modificar datos
             async handleSavePayment(e) {
                 e.preventDefault();
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -693,6 +734,8 @@
                     return;
                 }
 
+                const brother = BROTHERS.find(b => b.id === brotherId);
+                const key = this.selectedYear + "_" + brotherId + "_" + monthIdx;
                 const paymentObj = {
                     amount: amount, date: date, notes: notes,
                     voucherImg: this.tempVoucherBase64,
@@ -700,70 +743,155 @@
                     timestamp: new Date().toISOString()
                 };
 
-                // 🔒 INCREMENTAMOS LA VERSIÓN ANTES de tocar los datos
-                // Esto hace que cualquier sync en camino sea descartado
                 this.localVersion++;
-                console.log(`📝 Guardando local (v${this.localVersion})`);
-
                 this.setPayment(brotherId, this.selectedYear, monthIdx, paymentObj);
                 this.closeModal('paymentModal');
                 this.renderAll();
 
-                // POST al cloud — el sync en camino ya está "marcado" como obsoleto
-                await this.sendToCloud();
-
-                console.log(`✅ Guardado completado (v${this.localVersion})`);
+                await this.sendAction({
+                    action: "savePayment",
+                    key: key,
+                    brotherName: brother.name,
+                    monthName: MONTH_NAMES[monthIdx],
+                    year: this.selectedYear,
+                    data: paymentObj
+                });
             }
 
             async deletePaymentRecord() {
-                if (!this.isAdmin) { alert("Atención: Solo el administrador con clave puede eliminar este registro."); return; }
+                if (!this.isAdmin) { alert("Solo el administrador puede eliminar."); return; }
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
                 const brother = BROTHERS.find(b => b.id === brotherId);
-                const monthName = MONTH_NAMES[monthIdx];
+                const key = this.selectedYear + "_" + brotherId + "_" + monthIdx;
 
-                if (confirm(`¿Está seguro de ELIMINAR el registro de pago de ${brother.name} correspondiente a ${monthName} ${this.selectedYear}?`)) {
+                if (confirm("¿ELIMINAR el pago de " + brother.name + " de " + MONTH_NAMES[monthIdx] + " " + this.selectedYear + "?")) {
                     this.localVersion++;
                     this.setPayment(brotherId, this.selectedYear, monthIdx, null);
                     this.closeModal('paymentModal');
                     this.renderAll();
-                    await this.sendToCloud();
+                    await this.sendAction({ action: "deletePayment", key: key });
                 }
             }
 
             getPayment(brotherId, year, monthIdx) {
-                const key = `${year}_${brotherId}_${monthIdx}`;
+                const key = year + "_" + brotherId + "_" + monthIdx;
                 return this.payments[key] || null;
             }
 
             setPayment(brotherId, year, monthIdx, data) {
-                const key = `${year}_${brotherId}_${monthIdx}`;
+                const key = year + "_" + brotherId + "_" + monthIdx;
                 if (data === null) delete this.payments[key];
                 else this.payments[key] = data;
                 this.savePayments();
             }
 
-            sendWhatsAppDirectReceipt() {
+            // ============================================================
+            // 📩 MENSAJE 1: Confirmación de pago recibido
+            // ============================================================
+            sendWhatsAppConfirmation() {
+                if (!this.isAdmin) return;
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
-                const amount = document.getElementById('payAmount').value;
+                const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
+                const date = document.getElementById('payDate').value;
+                const notesInput = document.getElementById('payNotes').value.trim();
+
                 const brother = BROTHERS.find(b => b.id === brotherId);
-                const message = `Hola *${brother.name}*, recibas un cordial saludo. Se ha registrado correctamente tu pago de *L. ${amount}.00* correspondiente a la cuota IHSS de nuestra madre para el mes de *${MONTH_NAMES[monthIdx]} ${this.selectedYear}*. Muchas gracias por tu valiosa colaboración. (Atte: Ricardo Cruz)`;
-                window.open(`https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank');
+                const monthName = MONTH_NAMES[monthIdx];
+                const year = this.selectedYear;
+
+                const record = this.getPayment(brotherId, year, monthIdx);
+                const voucherUrl = (record && record.voucherImg && record.voucherImg.indexOf("http") === 0)
+                    ? record.voucherImg
+                    : '';
+
+                const notesText = notesInput || 'Registrado por Ricardo Cruz';
+                const amountText = amount.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+
+                let message =
+                    "🧾 INFORME DE PAGO RECIBIDO - IHSS MADRE\n\n" +
+                    "Hola " + brother.name + ", confirmamos la recepción de tu aportación:\n\n" +
+                    "👤 Aportante: " + brother.name + "\n" +
+                    "📅 Mes(es) Cubierto(s): " + monthName + " (" + year + ")\n" +
+                    "💰 Monto Registrado: L. " + amountText + "\n" +
+                    "🗓️ Fecha: " + date + "\n" +
+                    "📌 Notas: " + notesText + "\n";
+
+                if (voucherUrl) {
+                    message += "\n🖼️ Ver comprobante registrado:\n" + voucherUrl + "\n";
+                }
+
+                message += "\n✍️ Administrador: Ricardo Cruz\n¡Muchas gracias por estar al día! 🙏🏼🏼";
+
+                window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
             }
 
-            sendWhatsAppDirectReminder() {
+            // ============================================================
+            // 📩 MENSAJE 2: Recordatorio de pago pendiente
+            // ============================================================
+            sendWhatsAppReminder() {
+                if (!this.isAdmin) return;
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
                 const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
                 const brother = BROTHERS.find(b => b.id === brotherId);
-                const message = `Hola *${brother.name}*, espero te encuentres muy bien. Te comparto un recordatorio sobre la cuota mensual del IHSS de nuestra madre correspondiente a *${MONTH_NAMES[monthIdx]} ${this.selectedYear}* (Monto: L. 330.00). Si ya realizaste la aportación, por favor envíame la foto del comprobante para registrarlo. ¡Muchas gracias! (Atte: Ricardo Cruz)`;
-                window.open(`https://wa.me/${brother.phone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank');
+                const monthName = MONTH_NAMES[monthIdx];
+                const year = this.selectedYear;
+                const amountText = BASE_FEE.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+
+                const message =
+                    "🔔 RECORDATORIO DE PAGO - IHSS MADRE\n\n" +
+                    "Hola " + brother.name + ", esperamos que estés muy bien. 😊\n\n" +
+                    "Aún no hemos recibido tu aportación correspondiente a:\n\n" +
+                    "👤 Aportante: " + brother.name + "\n" +
+                    "📅 Mes Pendiente: " + monthName + " (" + year + ")\n" +
+                    "💰 Monto a Transferir: L. " + amountText + "\n" +
+                    "📆 Estado: ⏳ Pendiente de pago\n\n" +
+                    "📸 Al realizar el pago, por favor envíanos la foto del comprobante para poder registrar tu aportación.\n\n" +
+                    "✍️ Administrador: Ricardo Cruz\n" +
+                    "¡Gracias por tu valiosa colaboración! 🙏🏼";
+
+                window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
+            }
+
+            // ============================================================
+            // 📩 MENSAJE 3: Aviso a Nadia
+            // ============================================================
+            buildNadiaMessage(deposit) {
+                if (!deposit) return '';
+                const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
+                const bank = deposit.bank || 'Banpaís';
+                const ref = deposit.ref || 'N/A';
+                const date = deposit.date || '';
+                const notes = deposit.notes || 'Sin notas adicionales';
+                const voucherUrl = (deposit.voucherImg && deposit.voucherImg.indexOf("http") === 0)
+                    ? deposit.voucherImg
+                    : '';
+
+                let message =
+                    "🏦 AVISO DE DEPÓSITO BANCARIO - ESCUELA PROVERBIOS 22:6\n\n" +
+                    "Hola Nadia, esperamos que estés muy bien. 😊\n\n" +
+                    "Te informamos que se ha realizado el depósito correspondiente a la cuota mensual del IHSS de Miriam García:\n\n" +
+                    "🏫 Destino: Escuela Proverbios 22:6\n" +
+                    "🏦 Banco: " + bank + "\n" +
+                    "💳 Nº Comprobante / Referencia: " + ref + "\n" +
+                    "💰 Monto Depositado: L. " + amountText + "\n" +
+                    "🗓️ Fecha del Depósito: " + date + "\n" +
+                    "📌 Notas: " + notes + "\n";
+
+                if (voucherUrl) {
+                    message += "\n🖼️ Ver comprobante del depósito:\n" + voucherUrl + "\n";
+                }
+
+                message += "\n✍️ Administrador: Ricardo Cruz\n¡Gracias por confirmar la recepción! 🙏🏼";
+
+                return "https://wa.me/" + NADIA_PHONE.replace('+', '') + "?text=" + encodeURIComponent(message);
             }
 
             openSchoolDepositModal() {
                 if (!this.isAdmin) { alert("Requiere ingresar la clave de administrador para registrar depósitos bancarios."); this.openLoginModal(); return; }
                 document.getElementById('schoolAmount').value = '';
-                document.getElementById('schoolBank').value = 'Banco Atlántida';
+                document.getElementById('schoolBank').value = 'Banpaís';
                 document.getElementById('schoolRef').value = '';
                 document.getElementById('schoolNotes').value = '';
                 this.tempSchoolVoucherBase64 = null;
@@ -775,15 +903,21 @@
 
             handleSchoolVoucherPreview(e) {
                 const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (evt) => {
-                        this.tempSchoolVoucherBase64 = evt.target.result;
-                        document.getElementById('schoolVoucherPreviewImg').src = this.tempSchoolVoucherBase64;
-                        document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
+                if (!file) return;
+
+                if (file.size > MAX_IMAGE_SIZE) {
+                    alert("La imagen es demasiado grande.\n\nTamaño actual: " + (file.size / 1024 / 1024).toFixed(2) + " MB\nMáximo permitido: 5 MB\n\nPor favor, comprime la imagen o toma una captura más ligera.");
+                    e.target.value = '';
+                    return;
                 }
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    this.tempSchoolVoucherBase64 = evt.target.result;
+                    document.getElementById('schoolVoucherPreviewImg').src = this.tempSchoolVoucherBase64;
+                    document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
             }
 
             async handleSaveSchoolDeposit(e) {
@@ -795,34 +929,62 @@
                 const notes = document.getElementById('schoolNotes').value;
 
                 const newDeposit = {
-                    id: 'sch_' + Date.now(), amount, date, bank, ref, notes,
+                    id: 'sch_' + Date.now(),
+                    amount: amount, date: date, bank: bank, ref: ref, notes: notes,
                     voucherImg: this.tempSchoolVoucherBase64
                 };
 
-                this.localVersion++;  // 🔒
+                // 🔓 Abrir ventana vacía YA para evitar bloqueo del navegador
+                const waWindow = window.open('about:blank', '_blank');
+
+                this.localVersion++;
                 this.schoolDeposits.unshift(newDeposit);
                 this.saveSchoolDeposits();
                 this.closeModal('schoolModal');
                 this.renderAll();
-                await this.sendToCloud();
+
+                const result = await this.sendAction({ action: "saveSchool", data: newDeposit });
+
+                // ✅ FIX: usar la respuesta del servidor con el voucher URL
+                let savedDeposit = newDeposit;
+                if (result && result.savedSchool) {
+                    savedDeposit = result.savedSchool;
+                } else if (result && Array.isArray(result.schoolDeposits)) {
+                    const found = result.schoolDeposits.find(d => d.id === newDeposit.id);
+                    if (found) savedDeposit = found;
+                }
+
+                const waUrl = this.buildNadiaMessage(savedDeposit);
+                if (waWindow && waUrl) {
+                    waWindow.location.href = waUrl;
+                } else if (waUrl) {
+                    window.open(waUrl, '_blank');
+                }
             }
 
             async deleteSchoolDeposit(depositId) {
                 if (!this.isAdmin) return;
-                if (confirm("¿Desea eliminar este registro de depósito bancario a la escuela?")) {
-                    this.localVersion++;  // 🔒
+                if (confirm("¿Eliminar este depósito bancario a la escuela?")) {
+                    this.localVersion++;
                     this.schoolDeposits = this.schoolDeposits.filter(d => d.id !== depositId);
                     this.saveSchoolDeposits();
                     this.renderAll();
-                    await this.sendToCloud();
+                    await this.sendAction({ action: "deleteSchool", id: depositId });
                 }
             }
 
-            openLightbox(imgSrc, caption = '') {
+            openLightbox(imgSrc, caption) {
                 if (!imgSrc) return;
                 document.getElementById('lightboxImg').src = imgSrc;
                 document.getElementById('lightboxCaption').textContent = caption || 'Comprobante de depósito / voucher';
                 document.getElementById('imageLightboxModal').classList.remove('hidden');
+            }
+
+            openLightboxById(depositId) {
+                const d = this.schoolDeposits.find(x => x.id === depositId);
+                if (d && d.voucherImg) {
+                    this.openLightbox(d.voucherImg, "Depósito: L. " + d.amount + " - " + d.bank);
+                }
             }
 
             renderAll() {
@@ -840,19 +1002,21 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
-                    const brotherTd = `
-                        <td class="py-3 px-4 bg-slate-50/50 sticky left-0 border-r border-slate-200">
-                            <div class="font-bold text-slate-800 text-sm flex items-center justify-between">
-                                <span>${brother.id}.- ${brother.name}</span>
-                            </div>
-                            <div class="text-[11px] text-slate-500 flex items-center justify-between mt-1">
-                                <span><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>${brother.displayPhone}</span>
-                                <a href="https://wa.me/${brother.phone.replace('+', '')}" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                                </a>
-                            </div>
-                        </td>
-                    `;
+                    // 🔒 Teléfono y WhatsApp solo para admins
+                    const contactSection = this.isAdmin
+                        ? '<span><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>' + brother.displayPhone + '</span>' +
+                          '<a href="https://wa.me/' + brother.phone.replace('+', '') + '" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1"><i class="fa-brands fa-whatsapp text-sm"></i></a>'
+                        : '<span class="text-slate-400 italic text-[10px]"><i class="fa-solid fa-lock text-slate-400 mr-1"></i>Datos privados</span>';
+
+                    const brotherTd =
+                        '<td class="py-3 px-4 bg-slate-50/50 sticky left-0 border-r border-slate-200">' +
+                            '<div class="font-bold text-slate-800 text-sm flex items-center justify-between">' +
+                                '<span>' + brother.id + '.- ' + brother.name + '</span>' +
+                            '</div>' +
+                            '<div class="text-[11px] text-slate-500 flex items-center justify-between mt-1">' +
+                                contactSection +
+                            '</div>' +
+                        '</td>';
 
                     let monthsHtml = '';
                     for (let m = 0; m < 12; m++) {
@@ -862,31 +1026,29 @@
                         if (rec) {
                             brotherYearTotal += rec.amount;
                             const hasVoucher = !!rec.voucherImg;
-                            cellContent = `
-                                <button onclick="app.openPaymentModal(${brother.id}, ${m})" class="w-full h-11 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 p-1 flex flex-col items-center justify-center transition shadow-sm group relative">
-                                    <span class="font-extrabold text-[11px]">L. ${rec.amount}</span>
-                                    <div class="flex items-center gap-1 text-[9px] text-emerald-700">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        ${hasVoucher ? '<i class="fa-solid fa-paperclip text-emerald-800"></i>' : ''}
-                                    </div>
-                                </button>
-                            `;
+                            cellContent =
+                                '<button onclick="app.openPaymentModal(' + brother.id + ', ' + m + ')" class="w-full h-11 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 p-1 flex flex-col items-center justify-center transition shadow-sm group relative">' +
+                                    '<span class="font-extrabold text-[11px]">L. ' + rec.amount + '</span>' +
+                                    '<div class="flex items-center gap-1 text-[9px] text-emerald-700">' +
+                                        '<i class="fa-solid fa-circle-check"></i>' +
+                                        (hasVoucher ? '<i class="fa-solid fa-paperclip text-emerald-800"></i>' : '') +
+                                    '</div>' +
+                                '</button>';
                         } else {
-                            cellContent = `
-                                <button onclick="app.openPaymentModal(${brother.id}, ${m})" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-emerald-50 text-slate-400 hover:text-emerald-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">
-                                    <span class="text-[10px] font-semibold">Pendiente</span>
-                                    <span class="text-[9px] font-light">L. 330</span>
-                                </button>
-                            `;
+                            cellContent =
+                                '<button onclick="app.openPaymentModal(' + brother.id + ', ' + m + ')" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-emerald-50 text-slate-400 hover:text-emerald-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">' +
+                                    '<span class="text-[10px] font-semibold">Pendiente</span>' +
+                                    '<span class="text-[9px] font-light">L. 330</span>' +
+                                '</button>';
                         }
-                        monthsHtml += `<td class="py-2 px-1 text-center">${cellContent}</td>`;
+                        monthsHtml += '<td class="py-2 px-1 text-center">' + cellContent + '</td>';
                     }
 
-                    const totalTd = `
-                        <td class="py-3 px-4 text-right bg-slate-50/50 border-l border-slate-200 font-black text-slate-900 text-sm">
-                            L. ${brotherYearTotal.toLocaleString('es-HN', { minimumFractionDigits: 2 })}
-                        </td>
-                    `;
+                    const totalTd =
+                        '<td class="py-3 px-4 text-right bg-slate-50/50 border-l border-slate-200 font-black text-slate-900 text-sm">' +
+                            'L. ' + brotherYearTotal.toLocaleString('es-HN', { minimumFractionDigits: 2 }) +
+                        '</td>';
+
                     tr.innerHTML = brotherTd + monthsHtml + totalTd;
                     tbody.appendChild(tr);
                 });
@@ -910,14 +1072,14 @@
                 const expectedAnnual = 5 * 12 * BASE_FEE;
                 const percent = Math.round((totalCollectedYear / expectedAnnual) * 100);
 
-                document.getElementById('kpiTotalExpected').textContent = `L. ${expectedAnnual.toLocaleString('es-HN')}.00`;
-                document.getElementById('kpiTotalCollected').textContent = `L. ${totalCollectedYear.toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
-                document.getElementById('kpiCollectionPercent').textContent = `${percent}% de la meta anual`;
-                document.getElementById('kpiCurrentMonthStatus').textContent = `${currentMonthPaidCount} / 5`;
-                document.getElementById('kpiMonthName').textContent = `Hermanos al día en ${MONTH_NAMES[currentMonthIdx]}`;
+                document.getElementById('kpiTotalExpected').textContent = 'L. ' + expectedAnnual.toLocaleString('es-HN') + '.00';
+                document.getElementById('kpiTotalCollected').textContent = 'L. ' + totalCollectedYear.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+                document.getElementById('kpiCollectionPercent').textContent = percent + '% de la meta anual';
+                document.getElementById('kpiCurrentMonthStatus').textContent = currentMonthPaidCount + ' / 5';
+                document.getElementById('kpiMonthName').textContent = 'Hermanos al día en ' + MONTH_NAMES[currentMonthIdx];
 
                 const schoolSum = this.schoolDeposits.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-                document.getElementById('kpiSchoolTotal').textContent = `L. ${schoolSum.toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                document.getElementById('kpiSchoolTotal').textContent = 'L. ' + schoolSum.toLocaleString('es-HN', { minimumFractionDigits: 2 });
             }
 
             renderSchoolDeposits() {
@@ -925,13 +1087,12 @@
                 container.innerHTML = '';
 
                 if (this.schoolDeposits.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full py-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
-                            <i class="fa-solid fa-building-columns text-3xl mb-2 text-slate-300"></i>
-                            <p class="text-sm font-semibold">No se han registrado depósitos a la escuela aún.</p>
-                            <p class="text-xs">Los depósitos registrados por el administrador aparecerán en esta sección.</p>
-                        </div>
-                    `;
+                    container.innerHTML =
+                        '<div class="col-span-full py-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">' +
+                            '<i class="fa-solid fa-building-columns text-3xl mb-2 text-slate-300"></i>' +
+                            '<p class="text-sm font-semibold">No se han registrado depósitos a la escuela aún.</p>' +
+                            '<p class="text-xs">Los depósitos registrados por el administrador aparecerán en esta sección.</p>' +
+                        '</div>';
                     return;
                 }
 
@@ -939,41 +1100,44 @@
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:shadow-md transition relative group";
                     const hasImage = !!deposit.voucherImg;
+                    const amountFmt = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
 
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">
-                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
-                                    <i class="fa-solid fa-university mr-1"></i> ${deposit.bank || 'Banco'}
-                                </span>
-                                <span class="text-xs text-slate-400 font-medium">${deposit.date}</span>
-                            </div>
-                            <p class="text-2xl font-black text-slate-900 mb-1">
-                                L. ${parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 })}
-                            </p>
-                            ${deposit.ref ? `<p class="text-xs text-slate-500 font-mono mb-2"><i class="fa-solid fa-receipt mr-1"></i>Ref: ${deposit.ref}</p>` : ''}
-                            ${deposit.notes ? `<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mb-3 border border-slate-100">${deposit.notes}</p>` : ''}
-                        </div>
-                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between mt-2">
-                            ${hasImage ? `
-                                <button onclick="app.openLightbox('${deposit.voucherImg}', 'Depósito: L. ${deposit.amount} - ${deposit.bank}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 border border-emerald-200">
-                                    <i class="fa-solid fa-image text-emerald-600"></i> Ver Comprobante
-                                </button>
-                            ` : '<span class="text-[11px] text-slate-400 italic">Sin comprobante adjunto</span>'}
-                            ${this.isAdmin ? `
-                                <button onclick="app.deleteSchoolDeposit('${deposit.id}')" class="text-red-500 hover:text-red-700 text-xs p-1.5 rounded-lg hover:bg-red-50 transition">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
+                    card.innerHTML =
+                        '<div>' +
+                            '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">' +
+                                '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">' +
+                                    '<i class="fa-solid fa-university mr-1"></i> ' + (deposit.bank || 'Banco') +
+                                '</span>' +
+                                '<span class="text-xs text-slate-400 font-medium">' + deposit.date + '</span>' +
+                            '</div>' +
+                            '<p class="text-2xl font-black text-slate-900 mb-1">' +
+                                'L. ' + amountFmt +
+                            '</p>' +
+                            (deposit.ref ? '<p class="text-xs text-slate-500 font-mono mb-2"><i class="fa-solid fa-receipt mr-1"></i>Ref: ' + deposit.ref + '</p>' : '') +
+                            (deposit.notes ? '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mb-3 border border-slate-100">' + deposit.notes + '</p>' : '') +
+                        '</div>' +
+                        '<div class="pt-2 border-t border-slate-100 flex items-center justify-between mt-2">' +
+                            (hasImage ?
+                                '<button onclick="app.openLightboxById(\'' + deposit.id + '\')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 border border-emerald-200">' +
+                                    '<i class="fa-solid fa-image text-emerald-600"></i> Ver Comprobante' +
+                                '</button>'
+                                : '<span class="text-[11px] text-slate-400 italic">Sin comprobante adjunto</span>'
+                            ) +
+                            (this.isAdmin ?
+                                '<button onclick="app.deleteSchoolDeposit(\'' + deposit.id + '\')" class="text-red-500 hover:text-red-700 text-xs p-1.5 rounded-lg hover:bg-red-50 transition">' +
+                                    '<i class="fa-solid fa-trash-can"></i>' +
+                                '</button>'
+                                : ''
+                            ) +
+                        '</div>';
+
                     container.appendChild(card);
                 });
             }
         }
 
         let app;
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', function() {
             app = new IHSSApp();
             app.init();
         });
