@@ -332,7 +332,6 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observaciones / Notas (Opcional)</label>
                     <input type="text" id="payNotes" placeholder="Ej. Pago adelantado..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
                 </div>
-                <!-- 🔒 WhatsApp: solo para admins -->
                 <div class="admin-only hidden bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
                     <p class="text-[11px] font-bold text-emerald-900 uppercase">Notificaciones por WhatsApp</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -433,14 +432,11 @@
             { id: 5, name: "Cristopher", phone: "+50431809663", displayPhone: "+504 31809663" }
         ];
 
-        // 📱 Teléfono de Nadia (receptora de depósitos a la escuela)
         const NADIA_PHONE = "+50498124228";
 
-        // 🔐 Contraseña por defecto ofuscada (no en texto plano)
         const _pc = [73,72,83,83,109,97,100,114,101,50,48,50,54,33,82,120];
         const DEFAULT_ADMIN_PASSWORD = String.fromCharCode.apply(null, _pc);
 
-        // ⚠️ Límite de tamaño de imagen: 5 MB
         const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
         const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -475,7 +471,6 @@
 
                 await this.syncFromCloud();
 
-                // 🔄 Sync cada 60 segundos
                 setInterval(() => {
                     this.syncFromCloud();
                 }, 60000);
@@ -504,12 +499,24 @@
                         return;
                     }
 
-                    if (data && typeof data.payments === 'object' && data.payments !== null) {
-                        this.payments = data.payments;
+                    // ✅ MERGE: solo agregar/actualizar entradas del server, sin borrar locales
+                    if (data && data.payments && typeof data.payments === 'object') {
+                        const merged = {};
+                        for (const k in this.payments) merged[k] = this.payments[k];
+                        for (const k in data.payments) merged[k] = data.payments[k];
+                        this.payments = merged;
                         this.savePayments();
                     }
-                    if (data && Array.isArray(data.schoolDeposits)) {
-                        this.schoolDeposits = data.schoolDeposits;
+                    if (data && Array.isArray(data.schoolDeposits) && data.schoolDeposits.length > 0) {
+                        const mergedSchool = [];
+                        const serverIds = {};
+                        data.schoolDeposits.forEach(d => { serverIds[d.id] = true; mergedSchool.push(d); });
+                        this.schoolDeposits.forEach(d => {
+                            if (!serverIds[d.id] && d.voucherImg && d.voucherImg.indexOf("data:") === 0) {
+                                mergedSchool.push(d);
+                            }
+                        });
+                        this.schoolDeposits = mergedSchool;
                         this.saveSchoolDeposits();
                     }
                     this.renderAll();
@@ -523,6 +530,7 @@
                 }
             }
 
+            // ✅ FIX: ya NO sobreescribe payments/schoolDeposits con la respuesta del server
             async sendAction(payload) {
                 const syncIcon = document.getElementById('syncIcon');
                 const syncText = document.getElementById('syncStatusText');
@@ -539,15 +547,6 @@
                     console.log("✅ Respuesta del servidor:", result);
 
                     if (result.status === "success") {
-                        if (result.payments) {
-                            this.payments = result.payments;
-                            this.savePayments();
-                        }
-                        if (result.schoolDeposits) {
-                            this.schoolDeposits = result.schoolDeposits;
-                            this.saveSchoolDeposits();
-                        }
-                        this.renderAll();
                         if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
                         if (syncText) syncText.textContent = "Guardado en Sheets";
                         return result;
@@ -720,6 +719,7 @@
                 document.getElementById('payVoucherInput').value = '';
             }
 
+            // ✅ FIX: después de guardar, actualiza el URL del voucher del servidor
             async handleSavePayment(e) {
                 e.preventDefault();
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -748,7 +748,7 @@
                 this.closeModal('paymentModal');
                 this.renderAll();
 
-                await this.sendAction({
+                const result = await this.sendAction({
                     action: "savePayment",
                     key: key,
                     brotherName: brother.name,
@@ -756,6 +756,17 @@
                     year: this.selectedYear,
                     data: paymentObj
                 });
+
+                // ✅ Si el servidor devolvió la URL del voucher, actualizarla localmente
+                if (result && result.payments && result.payments[key]) {
+                    const srv = result.payments[key];
+                    if (srv.voucherImg && srv.voucherImg.indexOf("http") === 0 && this.payments[key]) {
+                        this.payments[key].voucherImg = srv.voucherImg;
+                        this.savePayments();
+                        this.renderAll();
+                        console.log("✅ Voucher URL actualizada localmente desde el servidor");
+                    }
+                }
             }
 
             async deletePaymentRecord() {
@@ -786,9 +797,7 @@
                 this.savePayments();
             }
 
-            // ============================================================
-            // 📩 MENSAJE 1: Confirmación de pago recibido
-            // ============================================================
+            // 📩 MENSAJE 1: Confirmación
             sendWhatsAppConfirmation() {
                 if (!this.isAdmin) return;
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -827,9 +836,7 @@
                 window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
             }
 
-            // ============================================================
-            // 📩 MENSAJE 2: Recordatorio de pago pendiente
-            // ============================================================
+            // 📩 MENSAJE 2: Recordatorio
             sendWhatsAppReminder() {
                 if (!this.isAdmin) return;
                 const brotherId = parseInt(document.getElementById('payBrotherId').value);
@@ -854,9 +861,7 @@
                 window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
             }
 
-            // ============================================================
             // 📩 MENSAJE 3: Aviso a Nadia
-            // ============================================================
             buildNadiaMessage(deposit) {
                 if (!deposit) return '';
                 const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
@@ -920,6 +925,7 @@
                 reader.readAsDataURL(file);
             }
 
+            // ✅ FIX: guardar depósito + actualizar voucher URL del servidor + WhatsApp con link
             async handleSaveSchoolDeposit(e) {
                 e.preventDefault();
                 const amount = parseFloat(document.getElementById('schoolAmount').value);
@@ -934,7 +940,6 @@
                     voucherImg: this.tempSchoolVoucherBase64
                 };
 
-                // 🔓 Abrir ventana vacía YA para evitar bloqueo del navegador
                 const waWindow = window.open('about:blank', '_blank');
 
                 this.localVersion++;
@@ -945,13 +950,18 @@
 
                 const result = await this.sendAction({ action: "saveSchool", data: newDeposit });
 
-                // ✅ FIX: usar la respuesta del servidor con el voucher URL
+                // ✅ Actualizar URL del voucher en local + objeto para WhatsApp
                 let savedDeposit = newDeposit;
-                if (result && result.savedSchool) {
-                    savedDeposit = result.savedSchool;
-                } else if (result && Array.isArray(result.schoolDeposits)) {
-                    const found = result.schoolDeposits.find(d => d.id === newDeposit.id);
-                    if (found) savedDeposit = found;
+                if (result && result.savedSchool && result.savedSchool.voucherImg) {
+                    const idx = this.schoolDeposits.findIndex(d => d.id === newDeposit.id);
+                    if (idx >= 0) {
+                        this.schoolDeposits[idx].voucherImg = result.savedSchool.voucherImg;
+                        this.saveSchoolDeposits();
+                        this.renderAll();
+                        savedDeposit = this.schoolDeposits[idx];
+                    } else {
+                        savedDeposit = result.savedSchool;
+                    }
                 }
 
                 const waUrl = this.buildNadiaMessage(savedDeposit);
@@ -1002,7 +1012,6 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
 
-                    // 🔒 Teléfono y WhatsApp solo para admins
                     const contactSection = this.isAdmin
                         ? '<span><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>' + brother.displayPhone + '</span>' +
                           '<a href="https://wa.me/' + brother.phone.replace('+', '') + '" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1"><i class="fa-brands fa-whatsapp text-sm"></i></a>'
