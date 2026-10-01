@@ -128,7 +128,7 @@
             <div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Escuela Proverbios 22:6</p>
                 <p id="kpiSchoolTotal" class="text-2xl font-black text-teal-800 mt-1">L. 0.00</p>
-                <span class="text-[11px] text-teal-700 font-medium">Total depósitos <span class="currentYearLabel">2026</span></span>
+                <span class="text-[11px] text-teal-700 font-medium">Total depósitos <span id="kpiSchoolYearLabel">2026</span></span>
             </div>
             <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-700 border border-teal-100">
                 <i class="fa-solid fa-building-columns text-xl"></i>
@@ -169,18 +169,29 @@
         </div>
     </div>
 
-    <!-- MATRIZ ESCUELA (NUEVA) -->
+    <!-- MATRIZ ESCUELA -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 sm:p-6 bg-emerald-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex items-center gap-2">
                 <span class="p-2 bg-white/10 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-lg"></i></span>
                 <div>
-                    <h3 class="text-lg font-black tracking-tight text-white">Depósitos a Escuela Proverbios 22:6 - <span class="currentYearLabel">2026</span></h3>
+                    <h3 class="text-lg font-black tracking-tight text-white">Depósitos a Escuela Proverbios 22:6</h3>
                     <p class="text-xs text-emerald-200 mt-0.5">Depósitos mensuales al banco Banpaís. Click en cada mes para registrar.</p>
                 </div>
             </div>
+            <!-- Selector de año INDEPENDIENTE para Escuela -->
+            <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
+                <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
+                <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año Escuela:</span>
+                <select id="schoolYear" onchange="app.changeSchoolYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer">
+                    <option value="2027" class="text-slate-900">2027</option>
+                    <option value="2026" class="text-slate-900" selected>2026</option>
+                    <option value="2025" class="text-slate-900">2025</option>
+                    <option value="2024" class="text-slate-900">2024</option>
+                    <option value="2023" class="text-slate-900">2023</option>
+                </select>
+            </div>
         </div>
-        <!-- Scroll horizontal + vertical -->
         <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-96">
             <table class="w-full text-left border-collapse min-w-[900px]">
                 <thead class="sticky top-0 z-10">
@@ -313,6 +324,7 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Voucher</label>
                 <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
+                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Se guardará en Drive: Registro IHSS Madre / Año / Hermano /</p>
                 <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                     <img id="voucherPreviewImg" src="" class="max-h-48 mx-auto object-contain py-2">
                     <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
@@ -348,7 +360,7 @@
     </div>
 </div>
 
-<!-- MODAL ESCUELA (NUEVO) -->
+<!-- MODAL ESCUELA -->
 <div id="schoolModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
         <div class="p-5 bg-emerald-950 text-white flex items-center justify-between">
@@ -391,6 +403,7 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante</label>
                 <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
+                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Se guardará en Drive: Registro IHSS Madre / Escuela / Año /</p>
                 <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                     <img id="schoolVoucherPreviewImg" src="" class="max-h-40 mx-auto object-contain py-2">
                     <button type="button" onclick="app.removeSchoolVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
@@ -446,7 +459,8 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBo
 
 class IHSSApp {
     constructor() {
-        this.selectedYear = "2026";
+        this.selectedYear = "2026";        // año para hermanos
+        this.schoolYear = "2026";           // año INDEPENDIENTE para escuela
         this.isAdmin = false;
         this.adminPassword = localStorage.getItem('ihss_admin_pass') || DEFAULT_ADMIN_PASSWORD;
         this.tempVoucherBase64 = null;
@@ -577,9 +591,20 @@ class IHSSApp {
 
     changeYear(year) {
         this.selectedYear = year;
-        document.querySelectorAll('.currentYearLabel').forEach(el => el.textContent = year);
-        this.renderAll();
+        // Solo actualiza los labels de la sección hermanos
+        const brotherLabels = document.querySelectorAll('.currentYearLabel');
+        brotherLabels.forEach(el => el.textContent = year);
+        this.renderMatrix();
+        this.renderKPIs();
         this.syncFromCloud();
+    }
+
+    // ✅ NUEVO: cambio de año independiente para escuela
+    changeSchoolYear(year) {
+        this.schoolYear = year;
+        document.getElementById('kpiSchoolYearLabel').textContent = year;
+        this.renderSchoolMatrix();
+        this.renderKPIs();
     }
 
     toggleAdminAuth() {
@@ -659,7 +684,7 @@ class IHSSApp {
 
     closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // ============ PAGOS HERMANOS ============
+    /* ============ PAGOS HERMANOS ============ */
     getPayment(bid, year, midx) { return this.payments[year + "_" + bid + "_" + midx] || null; }
     setPayment(bid, year, midx, data) {
         const k = year + "_" + bid + "_" + midx;
@@ -732,7 +757,14 @@ class IHSSApp {
         this.setPayment(bid, this.selectedYear, midx, obj);
         this.closeModal('paymentModal');
         this.renderAll();
-        const result = await this.sendAction({ action: "savePayment", key, brotherName: brother.name, monthName: MONTH_NAMES[midx], year: this.selectedYear, data: obj });
+        const result = await this.sendAction({
+            action: "savePayment",
+            key,
+            brotherName: brother.name,
+            monthName: MONTH_NAMES[midx],
+            year: this.selectedYear,
+            data: obj
+        });
         if (result && result.savedPayment && result.savedPayment.voucherImg) {
             if (this.payments[key]) {
                 this.payments[key].voucherImg = result.savedPayment.voucherImg;
@@ -757,7 +789,7 @@ class IHSSApp {
         }
     }
 
-    // ============ DEPÓSITOS ESCUELA ============
+    /* ============ DEPÓSITOS ESCUELA ============ */
     getSchoolDeposit(year, midx) { return this.schoolDeposits[year + "_" + midx] || null; }
     setSchoolDeposit(year, midx, data) {
         const k = year + "_" + midx;
@@ -771,11 +803,11 @@ class IHSSApp {
         if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
         this.currentSchoolMonth = monthIdx;
 
-        const label = MONTH_NAMES[monthIdx] + " " + this.selectedYear;
+        const label = MONTH_NAMES[monthIdx] + " " + this.schoolYear;
         document.getElementById('schoolMonthLabel').textContent = label;
         document.getElementById('schoolMonthDisplay').textContent = label;
 
-        const rec = this.getSchoolDeposit(this.selectedYear, monthIdx);
+        const rec = this.getSchoolDeposit(this.schoolYear, monthIdx);
         if (rec) {
             document.getElementById('schoolAmount').value = rec.amount || '';
             document.getElementById('schoolDate').value = rec.date || new Date().toISOString().split('T')[0];
@@ -835,28 +867,27 @@ class IHSSApp {
         const notes = document.getElementById('schoolNotes').value;
 
         const midx = this.currentSchoolMonth;
-        const key = this.selectedYear + "_" + midx;
+        const key = this.schoolYear + "_" + midx;
 
         const obj = {
-            id: 'sch_' + this.selectedYear + '_' + midx,
+            id: 'sch_' + this.schoolYear + '_' + midx,
             amount, date, bank, ref, notes,
             voucherImg: this.tempSchoolVoucherBase64,
             timestamp: new Date().toISOString()
         };
 
-        // Abrir ventana WhatsApp ANTES del await (evita popup blocker)
         let waWin = null;
         if (notifyNadia) waWin = window.open('about:blank', '_blank');
 
         this.localVersion++;
-        this.setSchoolDeposit(this.selectedYear, midx, obj);
+        this.setSchoolDeposit(this.schoolYear, midx, obj);
         this.closeModal('schoolModal');
         this.renderAll();
 
         const result = await this.sendAction({
             action: "saveSchool",
             key,
-            year: this.selectedYear,
+            year: this.schoolYear,
             monthName: MONTH_NAMES[midx],
             data: obj
         });
@@ -864,7 +895,7 @@ class IHSSApp {
         let saved = obj;
         if (result && result.savedSchool) {
             saved = result.savedSchool;
-            const k = this.selectedYear + "_" + midx;
+            const k = this.schoolYear + "_" + midx;
             if (this.schoolDeposits[k]) {
                 this.schoolDeposits[k].voucherImg = saved.voucherImg;
                 this.saveSchoolDeposits();
@@ -882,12 +913,12 @@ class IHSSApp {
     async deleteSchoolDeposit() {
         if (!this.isAdmin) return;
         const midx = this.currentSchoolMonth;
-        if (confirm("¿Eliminar depósito de " + MONTH_NAMES[midx] + " " + this.selectedYear + "?")) {
+        if (confirm("¿Eliminar depósito de " + MONTH_NAMES[midx] + " " + this.schoolYear + "?")) {
             this.localVersion++;
-            this.setSchoolDeposit(this.selectedYear, midx, null);
+            this.setSchoolDeposit(this.schoolYear, midx, null);
             this.closeModal('schoolModal');
             this.renderAll();
-            await this.sendAction({ action: "deleteSchool", key: this.selectedYear + "_" + midx });
+            await this.sendAction({ action: "deleteSchool", key: this.schoolYear + "_" + midx });
         }
     }
 
@@ -899,7 +930,7 @@ class IHSSApp {
         const date = deposit.date || '';
         const notes = deposit.notes || 'Sin notas';
         const voucherUrl = (deposit.voucherImg && deposit.voucherImg.indexOf("http") === 0) ? deposit.voucherImg : '';
-        const mesLabel = MONTH_NAMES[monthIdx] + " " + this.selectedYear;
+        const mesLabel = MONTH_NAMES[monthIdx] + " " + this.schoolYear;
 
         let msg = "🏦 AVISO DE DEPÓSITO BANCARIO - ESCUELA PROVERBIOS 22:6\n\n";
         msg += "Hola Nadia, esperamos que estés muy bien. 😊\n\n";
@@ -922,23 +953,14 @@ class IHSSApp {
         document.getElementById('lightboxCaption').textContent = caption || '';
         document.getElementById('imageLightboxModal').classList.remove('hidden');
     }
-    openLightboxById(depositId) {
-        for (const k in this.schoolDeposits) {
-            const d = this.schoolDeposits[k];
-            if (d.id === depositId && d.voucherImg) {
-                this.openLightbox(d.voucherImg, "Depósito L. " + d.amount + " - " + (d.bank || ''));
-                return;
-            }
-        }
-    }
     openLightboxByMonth(monthIdx) {
-        const d = this.getSchoolDeposit(this.selectedYear, monthIdx);
+        const d = this.getSchoolDeposit(this.schoolYear, monthIdx);
         if (d && d.voucherImg) {
-            this.openLightbox(d.voucherImg, "Depósito " + MONTH_NAMES[monthIdx] + " - L. " + d.amount);
+            this.openLightbox(d.voucherImg, "Depósito " + MONTH_NAMES[monthIdx] + " " + this.schoolYear + " - L. " + d.amount);
         }
     }
 
-    // ============ WHATSAPP HERMANOS ============
+    /* ============ WHATSAPP HERMANOS ============ */
     sendWhatsAppConfirmation() {
         if (!this.isAdmin) return;
         const bid = parseInt(document.getElementById('payBrotherId').value);
@@ -979,7 +1001,7 @@ class IHSSApp {
         window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(m), '_blank');
     }
 
-    // ============ RENDER ============
+    /* ============ RENDER ============ */
     renderAll() {
         this.renderMatrix();
         this.renderSchoolMatrix();
@@ -1034,10 +1056,10 @@ class IHSSApp {
         const td = '<td class="py-3 px-4 bg-teal-50/50 sticky left-0 border-r border-slate-200 z-10">' +
             '<div class="font-bold text-slate-800 text-sm flex items-center gap-1">' +
             '<i class="fa-solid fa-school text-teal-700"></i> Escuela Proverbios 22:6</div>' +
-            '<div class="text-[11px] text-slate-500 mt-1">Depósitos a Banpaís</div></td>';
+            '<div class="text-[11px] text-slate-500 mt-1">Depósitos a Banpaís <strong>' + this.schoolYear + '</strong></div></td>';
         let cells = '';
         for (let m = 0; m < 12; m++) {
-            const rec = this.getSchoolDeposit(this.selectedYear, m);
+            const rec = this.getSchoolDeposit(this.schoolYear, m);
             let c;
             if (rec) {
                 total += parseFloat(rec.amount) || 0;
@@ -1081,10 +1103,11 @@ class IHSSApp {
 
         let schoolTotal = 0;
         for (let m = 0; m < 12; m++) {
-            const rec = this.getSchoolDeposit(this.selectedYear, m);
+            const rec = this.getSchoolDeposit(this.schoolYear, m);
             if (rec) schoolTotal += parseFloat(rec.amount) || 0;
         }
         document.getElementById('kpiSchoolTotal').textContent = 'L. ' + schoolTotal.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        document.getElementById('kpiSchoolYearLabel').textContent = this.schoolYear;
     }
 }
 
