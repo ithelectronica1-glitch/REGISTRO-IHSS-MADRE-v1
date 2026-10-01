@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cuotas IHSS Madre - V11</title>
+    <title>Registro de Cuotas IHSS Madre - V12</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,12 +39,12 @@
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                        Registro de Cuotas IHSS Madre
-                        <span class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V11</span>
+                        <span id="appTitle">Registro de Cuotas IHSS Madre</span>
+                        <span id="appVersionBadge" class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V12</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-emerald-200 flex items-center gap-1.5 mt-0.5">
                         <i class="fa-solid fa-user-shield text-emerald-300"></i>
-                        <span>Administrador: <strong class="text-white font-semibold">Ricardo Cruz</strong></span>
+                        <span>Administrador: <strong id="adminNameLabel" class="text-white font-semibold">—</strong></span>
                     </p>
                 </div>
             </div>
@@ -72,13 +72,7 @@
                 <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
                     <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
                     <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año:</span>
-                    <select id="selectedYear" onchange="app.changeYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer">
-                        <option value="2027" class="text-slate-900">2027</option>
-                        <option value="2026" class="text-slate-900" selected>2026</option>
-                        <option value="2025" class="text-slate-900">2025</option>
-                        <option value="2024" class="text-slate-900">2024</option>
-                        <option value="2023" class="text-slate-900">2023</option>
-                    </select>
+                    <select id="selectedYear" onchange="app.changeYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer"></select>
                 </div>
             </div>
         </div>
@@ -103,9 +97,9 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Meta Anual (5 Hermanos)</p>
-                <p id="kpiTotalExpected" class="text-2xl font-black text-slate-800 mt-1">L. 19,800.00</p>
-                <span class="text-[11px] text-slate-500 font-medium">L. 330.00 c/u × 12 meses</span>
+                <p id="kpiExpectedLabel" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Meta Anual</p>
+                <p id="kpiTotalExpected" class="text-2xl font-black text-slate-800 mt-1">—</p>
+                <span id="kpiExpectedDetail" class="text-[11px] text-slate-500 font-medium">—</span>
             </div>
             <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
                 <i class="fa-solid fa-calculator text-xl"></i>
@@ -113,7 +107,7 @@
         </div>
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recaudado <span class="currentYearLabel">2026</span></p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recaudado <span class="currentYearLabel">—</span></p>
                 <p id="kpiTotalCollected" class="text-2xl font-black text-emerald-700 mt-1">L. 0.00</p>
                 <span id="kpiCollectionPercent" class="text-[11px] text-emerald-800 font-bold">0% acumulado</span>
             </div>
@@ -124,7 +118,7 @@
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
             <div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cumplimiento Mes Actual</p>
-                <p id="kpiCurrentMonthStatus" class="text-2xl font-black text-emerald-700 mt-1">0 / 5</p>
+                <p id="kpiCurrentMonthStatus" class="text-2xl font-black text-emerald-700 mt-1">0 / 0</p>
                 <span id="kpiMonthName" class="text-[11px] text-slate-500 font-medium">Hermanos al día</span>
             </div>
             <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
@@ -133,9 +127,9 @@
         </div>
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Escuela Proverbios 22:6</p>
+                <p id="kpiSchoolLabel" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Escuela</p>
                 <p id="kpiSchoolTotal" class="text-2xl font-black text-teal-800 mt-1">L. 0.00</p>
-                <span class="text-[11px] text-teal-700 font-medium">Total depósitos <span id="kpiSchoolYearLabel">2026</span></span>
+                <span class="text-[11px] text-teal-700 font-medium">Total depósitos <span id="kpiSchoolYearLabel">—</span></span>
             </div>
             <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-700 border border-teal-100">
                 <i class="fa-solid fa-building-columns text-xl"></i>
@@ -148,9 +142,9 @@
             <div>
                 <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-users text-emerald-700"></i>
-                    Aportaciones de los Hermanos - <span class="currentYearLabel text-emerald-800">2026</span>
+                    Aportaciones de los Hermanos - <span class="currentYearLabel text-emerald-800">—</span>
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por hermano.</p>
+                <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong id="baseFeeLabel" class="text-slate-700">—</strong> por hermano.</p>
             </div>
             <button onclick="app.openPaymentModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-plus-circle"></i> Registrar Pago
@@ -180,20 +174,14 @@
             <div class="flex items-center gap-2">
                 <span class="p-2 bg-white/10 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-lg"></i></span>
                 <div>
-                    <h3 class="text-lg font-black tracking-tight text-white">Depósitos a Escuela Proverbios 22:6</h3>
-                    <p class="text-xs text-emerald-200 mt-0.5">Depósitos mensuales al banco Banpaís.</p>
+                    <h3 id="schoolSectionTitle" class="text-lg font-black tracking-tight text-white">Depósitos a Escuela</h3>
+                    <p id="schoolSectionSubtitle" class="text-xs text-emerald-200 mt-0.5">Depósitos mensuales.</p>
                 </div>
             </div>
             <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
                 <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
                 <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año:</span>
-                <select id="schoolYear" onchange="app.changeSchoolYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer">
-                    <option value="2027" class="text-slate-900">2027</option>
-                    <option value="2026" class="text-slate-900" selected>2026</option>
-                    <option value="2025" class="text-slate-900">2025</option>
-                    <option value="2024" class="text-slate-900">2024</option>
-                    <option value="2023" class="text-slate-900">2023</option>
-                </select>
+                <select id="schoolYear" onchange="app.changeSchoolYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer"></select>
             </div>
         </div>
         <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-96">
@@ -219,8 +207,14 @@
 
 <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
     <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-        <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span> &middot; <span class="text-emerald-400 font-bold">V11</span></p>
-        <p class="text-slate-500 text-[11px]">Administrador responsable: <strong>Ricardo Cruz</strong> | Escuela Proverbios 22:6</p>
+        <p class="font-medium text-slate-300">
+            <span id="footerAppName">Registro de Cuotas IHSS Madre</span>
+            &copy; <span id="footerSystemYear">—</span>
+            &middot; <span id="footerVersion" class="text-emerald-400 font-bold">V12</span>
+        </p>
+        <p class="text-slate-500 text-[11px]">
+            Administrador responsable: <strong id="footerAdminName">—</strong> | <span id="footerSchoolName">—</span>
+        </p>
     </div>
 </footer>
 
@@ -294,28 +288,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Hermano</label>
-                    <select id="payBrotherId" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold">
-                        <option value="1">1.- Jose</option><option value="2">2.- Oscar</option>
-                        <option value="3">3.- Kevin</option><option value="4">4.- Elvin</option>
-                        <option value="5">5.- Cristopher</option>
-                    </select>
+                    <select id="payBrotherId" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mes</label>
-                    <select id="payMonthIdx" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold">
-                        <option value="0">Enero</option><option value="1">Febrero</option>
-                        <option value="2">Marzo</option><option value="3">Abril</option>
-                        <option value="4">Mayo</option><option value="5">Junio</option>
-                        <option value="6">Julio</option><option value="7">Agosto</option>
-                        <option value="8">Septiembre</option><option value="9">Octubre</option>
-                        <option value="10">Noviembre</option><option value="11">Diciembre</option>
-                    </select>
+                    <select id="payMonthIdx" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold"></select>
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto (L.)</label>
-                    <input type="number" id="payAmount" required min="1" step="0.01" value="330" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-emerald-800">
+                    <input type="number" id="payAmount" required min="1" step="0.01" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-emerald-800">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha</label>
@@ -325,7 +308,7 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Voucher</label>
                 <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
-                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Drive: Registro IHSS Madre / Año / Hermano /</p>
+                <p id="payVoucherHint" class="text-[10px] text-slate-400 mt-1"></p>
                 <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                     <img id="voucherPreviewImg" src="" class="max-h-48 mx-auto object-contain py-2">
                     <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
@@ -367,7 +350,7 @@
             <div class="flex items-center space-x-3">
                 <div class="p-2.5 bg-emerald-800 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-xl"></i></div>
                 <div>
-                    <h3 class="text-lg font-black">Depósito a Escuela Proverbios 22:6</h3>
+                    <h3 id="schoolModalTitle" class="text-lg font-black">Depósito a Escuela</h3>
                     <p id="schoolMonthLabel" class="text-xs text-emerald-200">—</p>
                 </div>
             </div>
@@ -393,7 +376,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banco</label>
-                    <input type="text" id="schoolBank" required value="Banpaís" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+                    <input type="text" id="schoolBank" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nº Comprobante</label>
@@ -403,7 +386,7 @@
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante</label>
                 <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
-                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Drive: Registro IHSS Madre / Escuela / Año /</p>
+                <p id="schoolVoucherHint" class="text-[10px] text-slate-400 mt-1"></p>
                 <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
                     <img id="schoolVoucherPreviewImg" src="" class="max-h-40 mx-auto object-contain py-2">
                     <button type="button" onclick="app.removeSchoolVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
@@ -440,7 +423,29 @@
 </div>
 
 <script>
-const APP_VERSION = "V11";
+/* ═══════════════════════════════════════════════════════
+   MEJORA (Regla 1 - Cero Hardcoding):
+   Todo valor configurable vive en un solo objeto CFG.
+   ═══════════════════════════════════════════════════════ */
+const CFG = {
+    APP_VERSION:     "V12",
+    APP_NAME:        "Registro de Cuotas IHSS Madre",
+    ADMIN_NAME:      "Ricardo Cruz",
+    MADRE_NAME:      "Miriam García",
+    SCHOOL_NAME:     "Escuela Proverbios 22:6",
+    DEFAULT_BANK:    "Banpaís",
+    NADIA_NAME:      "Nadia",
+    NADIA_PHONE:     "+50498124228",
+    BASE_FEE:        330,
+    MAX_IMAGE_SIZE:  5 * 1024 * 1024,
+    APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBot1zQ7tbkE_PYYLSL2ndzSEOPyfNdsSglYOiuqV8Rvdbyd40oV6AkVA/exec",
+    // MEJORA (Regla 5): token compartido con Apps Script. NO es seguridad
+    // real (vive en el cliente), pero previene POST casuales.
+    SHARED_TOKEN:    "ihss_madre_2026_v12_x9f3k",
+    // MEJORA (Regla 1): rango de años generado dinámicamente
+    YEAR_RANGE: { start: 2023, end: new Date().getFullYear() + 2 }
+};
+
 const BROTHERS = [
     { id: 1, name: "Jose", phone: "+50488029422", displayPhone: "+504 88029422" },
     { id: 2, name: "Oscar", phone: "+50433896279", displayPhone: "+504 33896279" },
@@ -449,18 +454,18 @@ const BROTHERS = [
     { id: 5, name: "Cristopher", phone: "+50431809663", displayPhone: "+504 31809663" }
 ];
 
-const NADIA_PHONE = "+50498124228";
+const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+// MEJORA (Regla 5): la contraseña por defecto se ofusca. Aun así, NO es
+// seguridad real. La validación real debería hacerse en backend.
 const _pc = [73,72,83,83,109,97,100,114,101,50,48,50,54,33,82,120];
 const DEFAULT_ADMIN_PASSWORD = String.fromCharCode.apply(null, _pc);
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const BASE_FEE = 330;
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBot1zQ7tbkE_PYYLSL2ndzSEOPyfNdsSglYOiuqV8Rvdbyd40oV6AkVA/exec";
 
 class IHSSApp {
     constructor() {
-        this.selectedYear = "2026";
-        this.schoolYear = "2026";
+        const currentYear = String(new Date().getFullYear());
+        this.selectedYear = currentYear;
+        this.schoolYear   = currentYear;
         this.isAdmin = false;
         this.adminPassword = localStorage.getItem('ihss_admin_pass') || DEFAULT_ADMIN_PASSWORD;
         this.tempVoucherBase64 = null;
@@ -468,25 +473,102 @@ class IHSSApp {
         this.currentSchoolMonth = new Date().getMonth();
         this.localVersion = 0;
 
+        // MEJORA (Regla 2 - Control de Concurrencia): banderas para evitar
+        // solicitudes superpuestas de GET y POST.
+        this.isSyncing = false;
+        this.isSaving  = false;
+
         this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
-        this.STORAGE_KEY_SCHOOL = 'ihss_school_deposits_v2';
+        this.STORAGE_KEY_SCHOOL   = 'ihss_school_deposits_v2';
 
         this.payments = this.loadPayments();
         this.schoolDeposits = this.loadSchoolDeposits();
     }
 
+    /* ═══════════ INICIALIZACIÓN ═══════════ */
     async init() {
-        console.log("🚀 Registro IHSS Madre - " + APP_VERSION);
+        console.log("🚀 " + CFG.APP_NAME + " - " + CFG.APP_VERSION);
+
+        // MEJORA (Regla 1): inyectar valores de CFG en el DOM al arrancar
+        this.applyConfigToUI();
+
+        // MEJORA (Regla 6): año del sistema separado del año de datos
+        const footerYear = document.getElementById('footerSystemYear');
+        if (footerYear) footerYear.textContent = new Date().getFullYear();
+
+        this.populateStaticSelects();
+        this.populateYearSelects();
+
         this.renderAll();
         this.updateAdminUI();
+
         const cmi = new Date().getMonth();
         document.getElementById('payMonthIdx').value = cmi;
         document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
         document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
+
         await this.syncFromCloud();
         setInterval(() => { this.syncFromCloud(); }, 60000);
     }
 
+    // MEJORA (Regla 1): toda la UI que dependa de CFG se rellena aquí
+    applyConfigToUI() {
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        set('appTitle', CFG.APP_NAME);
+        set('appVersionBadge', CFG.APP_VERSION);
+        set('adminNameLabel', CFG.ADMIN_NAME);
+        set('footerAppName', CFG.APP_NAME);
+        set('footerVersion', CFG.APP_VERSION);
+        set('footerAdminName', CFG.ADMIN_NAME);
+        set('footerSchoolName', CFG.SCHOOL_NAME);
+        set('baseFeeLabel', 'L. ' + CFG.BASE_FEE.toFixed(2));
+        set('kpiExpectedLabel', 'Meta Anual (' + BROTHERS.length + ' Hermanos)');
+        set('kpiExpectedDetail', 'L. ' + CFG.BASE_FEE.toFixed(2) + ' c/u × 12 meses');
+        set('kpiSchoolLabel', CFG.SCHOOL_NAME);
+        set('schoolSectionTitle', 'Depósitos a ' + CFG.SCHOOL_NAME);
+        set('schoolSectionSubtitle', 'Depósitos mensuales al banco ' + CFG.DEFAULT_BANK + '.');
+        set('schoolModalTitle', 'Depósito a ' + CFG.SCHOOL_NAME);
+        set('payVoucherHint', 'Drive: ' + CFG.ADMIN_NAME + ' / Año / Hermano /');
+        set('schoolVoucherHint', 'Drive: ' + CFG.ADMIN_NAME + ' / Escuela / Año /');
+
+        // Rellenar el input del banco por defecto
+        const bankInput = document.getElementById('schoolBank');
+        if (bankInput) bankInput.value = CFG.DEFAULT_BANK;
+    }
+
+    // MEJORA (Regla 1): generar options de hermanos y meses dinámicamente
+    populateStaticSelects() {
+        const brotherSel = document.getElementById('payBrotherId');
+        if (brotherSel) {
+            brotherSel.innerHTML = BROTHERS.map(b =>
+                '<option value="' + b.id + '">' + b.id + '.- ' + b.name + '</option>'
+            ).join('');
+        }
+        const monthSel = document.getElementById('payMonthIdx');
+        if (monthSel) {
+            monthSel.innerHTML = MONTH_NAMES.map((m, i) =>
+                '<option value="' + i + '">' + m + '</option>'
+            ).join('');
+        }
+    }
+
+    // MEJORA (Regla 1): generar options de años dinámicamente
+    populateYearSelects() {
+        const build = (selectedYear) => {
+            const opts = [];
+            for (let y = CFG.YEAR_RANGE.end; y >= CFG.YEAR_RANGE.start; y--) {
+                const sel = (String(y) === String(selectedYear)) ? ' selected' : '';
+                opts.push('<option value="' + y + '" class="text-slate-900"' + sel + '>' + y + '</option>');
+            }
+            return opts.join('');
+        };
+        const selY = document.getElementById('selectedYear');
+        if (selY) selY.innerHTML = build(this.selectedYear);
+        const schY = document.getElementById('schoolYear');
+        if (schY) schY.innerHTML = build(this.schoolYear);
+    }
+
+    /* ═══════════ ACTUALIZAR APP ═══════════ */
     refreshApp() {
         if (confirm("🔄 ¿Actualizar la aplicación?\n\nSe recargará con la última versión disponible.\n\nAsegúrese de haber guardado todos los cambios.")) {
             const baseUrl = window.location.origin + window.location.pathname;
@@ -494,17 +576,29 @@ class IHSSApp {
         }
     }
 
+    /* ═══════════ SINCRONIZACIÓN ═══════════ */
     async syncFromCloud() {
+        // MEJORA (Regla 2): candado para evitar GETs superpuestos
+        if (this.isSyncing) {
+            console.log('⏸️ Sync ya en progreso, se omite esta llamada');
+            return;
+        }
+        this.isSyncing = true;
+
         const versionAtStart = this.localVersion;
         const syncIcon = document.getElementById('syncIcon');
         const syncText = document.getElementById('syncStatusText');
         if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
         if (syncText) syncText.textContent = "Sincronizando...";
+
         try {
-            const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), { method: 'GET', cache: 'no-store' });
+            const response = await fetch(CFG.APPS_SCRIPT_URL + "?t=" + Date.now(), {
+                method: 'GET', cache: 'no-store'
+            });
             if (!response.ok) throw new Error('HTTP ' + response.status);
             const data = await response.json();
 
+            // Verificar que no hubo cambios locales durante el fetch
             if (this.localVersion !== versionAtStart) {
                 if (syncIcon) syncIcon.className = "fa-solid fa-shield-halved text-emerald-300";
                 if (syncText) syncText.textContent = "Local protegido";
@@ -543,29 +637,44 @@ class IHSSApp {
             console.warn('No se pudo sincronizar:', err);
             if (syncIcon) syncIcon.className = "fa-solid fa-cloud text-emerald-300";
             if (syncText) syncText.textContent = "Sheets (Offline)";
+        } finally {
+            this.isSyncing = false;
         }
     }
 
+    /* ═══════════ ACCIONES AL BACKEND ═══════════ */
     async sendAction(payload) {
+        // MEJORA (Regla 2): candado para evitar POSTs superpuestos (doble clic)
+        if (this.isSaving) {
+            console.log('⏸️ Guardado ya en progreso, se omite esta llamada');
+            return null;
+        }
+        this.isSaving = true;
+
         const syncIcon = document.getElementById('syncIcon');
         const syncText = document.getElementById('syncStatusText');
         if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
         if (syncText) syncText.textContent = "Guardando...";
+
         try {
-            const response = await fetch(APPS_SCRIPT_URL, {
+            // MEJORA (Regla 5): agregar token al payload para que el backend valide
+            const body = Object.assign({}, payload, { token: CFG.SHARED_TOKEN });
+
+            const response = await fetch(CFG.APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(body)
             });
             const result = await response.json();
             console.log("✅ Respuesta:", result);
+
             if (result.status === "success") {
                 if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
                 if (syncText) syncText.textContent = "Guardado";
                 return result;
             } else {
                 if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
-                if (syncText) syncText.textContent = "Error";
+                if (syncText) syncText.textContent = result.message || "Error";
                 return null;
             }
         } catch (err) {
@@ -573,9 +682,12 @@ class IHSSApp {
             if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
             if (syncText) syncText.textContent = "Error al guardar";
             return null;
+        } finally {
+            this.isSaving = false;
         }
     }
 
+    /* ═══════════ PERSISTENCIA LOCAL ═══════════ */
     loadPayments() { const d = localStorage.getItem(this.STORAGE_KEY_PAYMENTS); return d ? JSON.parse(d) : {}; }
     savePayments() { localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments)); }
 
@@ -597,6 +709,7 @@ class IHSSApp {
     }
     saveSchoolDeposits() { localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits)); }
 
+    /* ═══════════ CAMBIO DE AÑO ═══════════ */
     changeYear(year) {
         this.selectedYear = year;
         document.querySelectorAll('.currentYearLabel').forEach(el => el.textContent = year);
@@ -604,7 +717,6 @@ class IHSSApp {
         this.renderKPIs();
         this.syncFromCloud();
     }
-
     changeSchoolYear(year) {
         this.schoolYear = year;
         document.getElementById('kpiSchoolYearLabel').textContent = year;
@@ -612,6 +724,7 @@ class IHSSApp {
         this.renderKPIs();
     }
 
+    /* ═══════════ AUTENTICACIÓN ═══════════ */
     toggleAdminAuth() {
         if (this.isAdmin) {
             if (confirm("¿Cerrar sesión de administrador?")) { this.isAdmin = false; this.updateAdminUI(); }
@@ -623,13 +736,16 @@ class IHSSApp {
         document.getElementById('loginModal').classList.remove('hidden');
     }
     handleLogin(e) {
-        e.preventDefault();
+        // MEJORA (Regla 4): validación defensiva del evento
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
         const p = document.getElementById('loginPassInput').value;
         if (p === this.adminPassword) {
             this.isAdmin = true;
             this.closeModal('loginModal');
             this.updateAdminUI();
-        } else document.getElementById('loginError').classList.remove('hidden');
+        } else {
+            document.getElementById('loginError').classList.remove('hidden');
+        }
     }
 
     openChangePassModal() {
@@ -640,7 +756,7 @@ class IHSSApp {
         document.getElementById('changePassModal').classList.remove('hidden');
     }
     handleChangePass(e) {
-        e.preventDefault();
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
         const cp = document.getElementById('currPassInput').value;
         const np = document.getElementById('newPassInput').value;
         const conf = document.getElementById('confirmPassInput').value;
@@ -687,8 +803,36 @@ class IHSSApp {
         this.renderAll();
     }
 
-    closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    /* ═══════════ MODALES: CERRAR + LIMPIAR ESTADO ═══════════ */
+    closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.classList.add('hidden');
+        // MEJORA (Regla 3 - Limpieza de Estado): al cerrar modales que
+        // contienen previsualizaciones de vouchers, reseteamos los buffers
+        // temporales para no dejar datos residuales en memoria.
+        if (id === 'paymentModal' || id === 'schoolModal') {
+            this.resetTempStates();
+        }
+    }
 
+    resetTempStates() {
+        this.tempVoucherBase64 = null;
+        this.tempSchoolVoucherBase64 = null;
+        const payInput = document.getElementById('payVoucherInput');
+        const schoolInput = document.getElementById('schoolVoucherInput');
+        const payImg = document.getElementById('voucherPreviewImg');
+        const schoolImg = document.getElementById('schoolVoucherPreviewImg');
+        const payBox = document.getElementById('voucherPreviewContainer');
+        const schoolBox = document.getElementById('schoolVoucherPreviewContainer');
+        if (payInput) payInput.value = '';
+        if (schoolInput) schoolInput.value = '';
+        if (payImg) payImg.src = '';
+        if (schoolImg) schoolImg.src = '';
+        if (payBox) payBox.classList.add('hidden');
+        if (schoolBox) schoolBox.classList.add('hidden');
+    }
+
+    /* ═══════════ PAGOS DE HERMANOS ═══════════ */
     getPayment(bid, year, midx) { return this.payments[year + "_" + bid + "_" + midx] || null; }
     setPayment(bid, year, midx, data) {
         const k = year + "_" + bid + "_" + midx;
@@ -700,36 +844,42 @@ class IHSSApp {
     openPaymentModal(brotherId, monthIdx) {
         if (typeof brotherId === "undefined") brotherId = 1;
         if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
+
+        // MEJORA (Regla 3): limpiar antes de abrir por si quedó basura
+        this.resetTempStates();
+
         document.getElementById('payBrotherId').value = brotherId;
         document.getElementById('payMonthIdx').value = monthIdx;
+        document.getElementById('payAmount').value = CFG.BASE_FEE;
+        document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
+
         const rec = this.getPayment(brotherId, this.selectedYear, monthIdx);
         if (rec) {
-            document.getElementById('payAmount').value = rec.amount || BASE_FEE;
+            document.getElementById('payAmount').value = rec.amount || CFG.BASE_FEE;
             document.getElementById('payDate').value = rec.date || new Date().toISOString().split('T')[0];
             document.getElementById('payNotes').value = rec.notes || '';
             this.tempVoucherBase64 = rec.voucherImg || null;
             if (rec.voucherImg) {
                 document.getElementById('voucherPreviewImg').src = rec.voucherImg;
                 document.getElementById('voucherPreviewContainer').classList.remove('hidden');
-            } else this.removeVoucherPreview();
+            }
             document.getElementById('btnDeletePayment').classList.remove('hidden');
         } else {
-            document.getElementById('payAmount').value = BASE_FEE;
-            document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('payNotes').value = '';
-            this.removeVoucherPreview();
             document.getElementById('btnDeletePayment').classList.add('hidden');
         }
-        document.getElementById('payVoucherInput').value = '';
         document.getElementById('paymentModal').classList.remove('hidden');
     }
 
     handleVoucherPreview(e) {
+        // MEJORA (Regla 4): verificar que el evento y el input existan
+        if (!e || !e.target || !e.target.files) return;
         const file = e.target.files[0];
         if (!file) return;
-        if (file.size > MAX_IMAGE_SIZE) {
-            alert("Imagen muy grande. Máximo 5 MB.");
-            e.target.value = ''; return;
+        if (file.size > CFG.MAX_IMAGE_SIZE) {
+            alert("Imagen muy grande. Máximo " + (CFG.MAX_IMAGE_SIZE / 1024 / 1024) + " MB.");
+            e.target.value = '';
+            return;
         }
         const r = new FileReader();
         r.onload = (evt) => {
@@ -747,29 +897,42 @@ class IHSSApp {
     }
 
     async handleSavePayment(e) {
-        e.preventDefault();
-        const bid = parseInt(document.getElementById('payBrotherId').value);
+        // MEJORA (Regla 4): validación defensiva del evento
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        if (!this.isAdmin) { alert("Autentíquese primero."); this.openLoginModal(); return; }
+
+        const bid  = parseInt(document.getElementById('payBrotherId').value);
         const midx = parseInt(document.getElementById('payMonthIdx').value);
-        const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
+        const amount = parseFloat(document.getElementById('payAmount').value) || CFG.BASE_FEE;
         const date = document.getElementById('payDate').value;
         const notes = document.getElementById('payNotes').value;
-        if (!this.isAdmin) { alert("Autentíquese primero."); this.openLoginModal(); return; }
+
         const brother = BROTHERS.find(b => b.id === bid);
+        if (!brother) { alert("Hermano no encontrado."); return; }
+
         const key = this.selectedYear + "_" + bid + "_" + midx;
-        const obj = { amount, date, notes, voucherImg: this.tempVoucherBase64, updatedBy: 'Ricardo Cruz', timestamp: new Date().toISOString() };
+        const obj = {
+            amount, date, notes,
+            voucherImg: this.tempVoucherBase64,
+            updatedBy: CFG.ADMIN_NAME,
+            timestamp: new Date().toISOString()
+        };
+
         this.localVersion++;
         this.setPayment(bid, this.selectedYear, midx, obj);
         this.closeModal('paymentModal');
         this.renderAll();
+
         const result = await this.sendAction({
             action: "savePayment",
             key,
             brotherName: brother.name,
             monthName: MONTH_NAMES[midx],
             year: this.selectedYear,
-            registeredBy: "Ricardo Cruz",
+            registeredBy: CFG.ADMIN_NAME,
             data: obj
         });
+
         if (result && result.savedPayment && result.savedPayment.voucherImg) {
             if (this.payments[key]) {
                 this.payments[key].voucherImg = result.savedPayment.voucherImg;
@@ -781,10 +944,12 @@ class IHSSApp {
 
     async deletePaymentRecord() {
         if (!this.isAdmin) { alert("Solo admin."); return; }
-        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const bid  = parseInt(document.getElementById('payBrotherId').value);
         const midx = parseInt(document.getElementById('payMonthIdx').value);
         const brother = BROTHERS.find(b => b.id === bid);
+        if (!brother) return;
         const key = this.selectedYear + "_" + bid + "_" + midx;
+
         if (confirm("¿Eliminar pago de " + brother.name + " de " + MONTH_NAMES[midx] + " " + this.selectedYear + "?")) {
             this.localVersion++;
             this.setPayment(bid, this.selectedYear, midx, null);
@@ -794,6 +959,7 @@ class IHSSApp {
         }
     }
 
+    /* ═══════════ DEPÓSITOS ESCUELA ═══════════ */
     getSchoolDeposit(year, midx) { return this.schoolDeposits[year + "_" + midx] || null; }
     setSchoolDeposit(year, midx, data) {
         const k = year + "_" + midx;
@@ -807,44 +973,47 @@ class IHSSApp {
         if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
         this.currentSchoolMonth = monthIdx;
 
+        // MEJORA (Regla 3): limpiar antes de abrir
+        this.resetTempStates();
+
         const label = MONTH_NAMES[monthIdx] + " " + this.schoolYear;
         document.getElementById('schoolMonthLabel').textContent = label;
         document.getElementById('schoolMonthDisplay').textContent = label;
+
+        // Resetear form con valores por defecto dinámicos
+        document.getElementById('schoolAmount').value = '';
+        document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('schoolBank').value = CFG.DEFAULT_BANK;
+        document.getElementById('schoolRef').value = '';
+        document.getElementById('schoolNotes').value = '';
 
         const rec = this.getSchoolDeposit(this.schoolYear, monthIdx);
         if (rec) {
             document.getElementById('schoolAmount').value = rec.amount || '';
             document.getElementById('schoolDate').value = rec.date || new Date().toISOString().split('T')[0];
-            document.getElementById('schoolBank').value = rec.bank || 'Banpaís';
+            document.getElementById('schoolBank').value = rec.bank || CFG.DEFAULT_BANK;
             document.getElementById('schoolRef').value = rec.ref || '';
             document.getElementById('schoolNotes').value = rec.notes || '';
             this.tempSchoolVoucherBase64 = rec.voucherImg || null;
             if (rec.voucherImg) {
                 document.getElementById('schoolVoucherPreviewImg').src = rec.voucherImg;
                 document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
-            } else {
-                this.removeSchoolVoucherPreview();
             }
             document.getElementById('btnDeleteSchool').classList.remove('hidden');
         } else {
-            document.getElementById('schoolAmount').value = '';
-            document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('schoolBank').value = 'Banpaís';
-            document.getElementById('schoolRef').value = '';
-            document.getElementById('schoolNotes').value = '';
-            this.removeSchoolVoucherPreview();
             document.getElementById('btnDeleteSchool').classList.add('hidden');
         }
-        document.getElementById('schoolVoucherInput').value = '';
         document.getElementById('schoolModal').classList.remove('hidden');
     }
 
     handleSchoolVoucherPreview(e) {
+        if (!e || !e.target || !e.target.files) return;
         const file = e.target.files[0];
         if (!file) return;
-        if (file.size > MAX_IMAGE_SIZE) {
-            alert("Imagen muy grande. Máximo 5 MB.");
-            e.target.value = ''; return;
+        if (file.size > CFG.MAX_IMAGE_SIZE) {
+            alert("Imagen muy grande. Máximo " + (CFG.MAX_IMAGE_SIZE / 1024 / 1024) + " MB.");
+            e.target.value = '';
+            return;
         }
         const r = new FileReader();
         r.onload = (evt) => {
@@ -862,18 +1031,17 @@ class IHSSApp {
     }
 
     async handleSaveSchoolDeposit(e, notifyNadia) {
-        if (e) e.preventDefault();
+        // MEJORA (Regla 4): validación defensiva del evento
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
         if (!this.isAdmin) { alert("Autentíquese primero."); return; }
+
         const amount = parseFloat(document.getElementById('schoolAmount').value);
         const date = document.getElementById('schoolDate').value;
         const bank = document.getElementById('schoolBank').value;
-        const ref = document.getElementById('schoolRef').value;
+        const ref  = document.getElementById('schoolRef').value;
         const notes = document.getElementById('schoolNotes').value;
 
-        if (!amount || amount <= 0) {
-            alert("Ingrese un monto válido.");
-            return;
-        }
+        if (!amount || amount <= 0) { alert("Ingrese un monto válido."); return; }
 
         const midx = this.currentSchoolMonth;
         const key = this.schoolYear + "_" + midx;
@@ -882,7 +1050,7 @@ class IHSSApp {
             id: 'sch_' + this.schoolYear + '_' + midx,
             amount, date, bank, ref, notes,
             voucherImg: this.tempSchoolVoucherBase64,
-            updatedBy: 'Ricardo Cruz',
+            updatedBy: CFG.ADMIN_NAME,
             timestamp: new Date().toISOString()
         };
 
@@ -899,7 +1067,7 @@ class IHSSApp {
             key,
             year: this.schoolYear,
             monthName: MONTH_NAMES[midx],
-            registeredBy: "Ricardo Cruz",
+            registeredBy: CFG.ADMIN_NAME,
             data: obj
         });
 
@@ -933,10 +1101,11 @@ class IHSSApp {
         }
     }
 
+    /* ═══════════ MENSAJE A NADIA ═══════════ */
     buildNadiaMessage(deposit, monthIdx) {
         if (!deposit) return '';
         const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
-        const bank = deposit.bank || 'Banpaís';
+        const bank = deposit.bank || CFG.DEFAULT_BANK;
         const ref = deposit.ref || 'N/A';
         const date = deposit.date || '';
         const notes = deposit.notes || 'Sin notas adicionales';
@@ -946,17 +1115,17 @@ class IHSSApp {
         let msg = "";
         msg += "🏦 *AVISO DE DEPÓSITO BANCARIO* 🏦\n";
         msg += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
-        msg += "Estimada *Nadia*, reciba un cordial saludo. 👋\n\n";
-        msg += "Por medio del presente, le informamos que se ha efectuado el depósito correspondiente al pago mensual del IHSS de la señora *Miriam García*, con destino a la *Escuela Proverbios 22:6*.\n\n";
+        msg += "Estimada *" + CFG.NADIA_NAME + "*, reciba un cordial saludo. 👋\n\n";
+        msg += "Por medio del presente, le informamos que se ha efectuado el depósito correspondiente al pago mensual del IHSS de la señora *" + CFG.MADRE_NAME + "*, con destino a la *" + CFG.SCHOOL_NAME + "*.\n\n";
         msg += "📋 *DETALLES DEL DEPÓSITO:*\n";
         msg += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        msg += "🏫 *Destino:* Escuela Proverbios 22:6\n";
+        msg += "🏫 *Destino:* " + CFG.SCHOOL_NAME + "\n";
         msg += "📅 *Mes cubierto:* " + mesLabel + "\n";
         msg += "🏦 *Banco:* " + bank + "\n";
         msg += "💳 *Nº Referencia:* " + ref + "\n";
         msg += "💰 *Monto:* L. " + amountText + "\n";
         msg += "🗓️ *Fecha del depósito:* " + date + "\n";
-        msg += "📝 *Concepto:* Pago IHSS — Miriam García\n";
+        msg += "📝 *Concepto:* Pago IHSS — " + CFG.MADRE_NAME + "\n";
         msg += "📌 *Notas:* " + notes + "\n";
         msg += "━━━━━━━━━━━━━━━━━━━━━━\n";
         if (voucherUrl) {
@@ -965,28 +1134,23 @@ class IHSSApp {
         }
         msg += "\nLe agradecemos su atención y quedamos atentos a su confirmación de recepción.\n\n";
         msg += "Atentamente,\n";
-        msg += "✍️ *Ricardo Cruz*\n";
-        msg += "_Administrador — Registro IHSS Madre_\n\n";
+        msg += "✍️ *" + CFG.ADMIN_NAME + "*\n";
+        msg += "_Administrador — " + CFG.APP_NAME + "_\n\n";
         msg += "_Le deseamos un excelente día._ ✨";
 
-        return "https://wa.me/" + NADIA_PHONE.replace('+', '') + "?text=" + encodeURIComponent(msg);
+        return "https://wa.me/" + CFG.NADIA_PHONE.replace('+', '') + "?text=" + encodeURIComponent(msg);
     }
 
-    openLightbox(src, caption) {
-        if (!src) return;
-        document.getElementById('lightboxImg').src = src;
-        document.getElementById('lightboxCaption').textContent = caption || '';
-        document.getElementById('imageLightboxModal').classList.remove('hidden');
-    }
-
+    /* ═══════════ WHATSAPP HERMANOS ═══════════ */
     sendWhatsAppConfirmation() {
         if (!this.isAdmin) return;
-        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const bid  = parseInt(document.getElementById('payBrotherId').value);
         const midx = parseInt(document.getElementById('payMonthIdx').value);
-        const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
+        const amount = parseFloat(document.getElementById('payAmount').value) || CFG.BASE_FEE;
         const date = document.getElementById('payDate').value;
-        const notes = document.getElementById('payNotes').value.trim() || 'Registrado por Ricardo Cruz';
+        const notes = document.getElementById('payNotes').value.trim() || 'Registrado por ' + CFG.ADMIN_NAME;
         const brother = BROTHERS.find(b => b.id === bid);
+        if (!brother) return;
         const rec = this.getPayment(bid, this.selectedYear, midx);
         const voucherUrl = (rec && rec.voucherImg && rec.voucherImg.indexOf("http") === 0) ? rec.voucherImg : '';
         const amountText = amount.toLocaleString('es-HN', { minimumFractionDigits: 2 });
@@ -998,15 +1162,17 @@ class IHSSApp {
         m += "🗓️ Fecha: " + date + "\n";
         m += "📌 Notas: " + notes + "\n";
         if (voucherUrl) m += "\n🖼️ Ver comprobante:\n" + voucherUrl + "\n";
-        m += "\n✍️ Administrador: Ricardo Cruz\n¡Gracias! 🙏🏼";
+        m += "\n✍️ Administrador: " + CFG.ADMIN_NAME + "\n¡Gracias! 🙏🏼";
         window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(m), '_blank');
     }
     sendWhatsAppReminder() {
         if (!this.isAdmin) return;
-        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const bid  = parseInt(document.getElementById('payBrotherId').value);
         const midx = parseInt(document.getElementById('payMonthIdx').value);
         const brother = BROTHERS.find(b => b.id === bid);
-        const amountText = BASE_FEE.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        if (!brother) return;
+        // MEJORA (Regla 1): monto dinámico en vez de hardcodeado
+        const amountText = CFG.BASE_FEE.toLocaleString('es-HN', { minimumFractionDigits: 2 });
         let m = "🔔 RECORDATORIO DE PAGO - IHSS MADRE\n\n";
         m += "Hola " + brother.name + ", esperamos que estés muy bien. 😊\n\n";
         m += "Aún no hemos recibido tu aportación de:\n\n";
@@ -1015,10 +1181,11 @@ class IHSSApp {
         m += "💰 Monto: L. " + amountText + "\n";
         m += "📆 Estado: ⏳ Pendiente\n\n";
         m += "📸 Al realizar el pago, envía la foto del comprobante.\n\n";
-        m += "✍️ Administrador: Ricardo Cruz\n¡Gracias! 🙏🏼";
+        m += "✍️ Administrador: " + CFG.ADMIN_NAME + "\n¡Gracias! 🙏🏼";
         window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(m), '_blank');
     }
 
+    /* ═══════════ RENDER ═══════════ */
     renderAll() {
         this.renderMatrix();
         this.renderSchoolMatrix();
@@ -1051,9 +1218,10 @@ class IHSSApp {
                         '<div class="flex items-center gap-1 text-[9px] text-emerald-700"><i class="fa-solid fa-circle-check"></i>' +
                         (h ? '<i class="fa-solid fa-paperclip text-emerald-800"></i>' : '') + '</div></button>';
                 } else {
+                    // MEJORA (Regla 1): cuota dinámica desde CFG
                     c = '<button onclick="app.openPaymentModal(' + brother.id + ',' + m + ')" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-emerald-50 text-slate-400 hover:text-emerald-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">' +
                         '<span class="text-[10px] font-semibold">Pendiente</span>' +
-                        '<span class="text-[9px] font-light">L. 330</span></button>';
+                        '<span class="text-[9px] font-light">L. ' + CFG.BASE_FEE + '</span></button>';
                 }
                 cells += '<td class="py-2 px-1 text-center">' + c + '</td>';
             }
@@ -1072,8 +1240,8 @@ class IHSSApp {
         tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
         const td = '<td class="py-3 px-4 bg-teal-50/50 sticky left-0 border-r border-slate-200 z-10">' +
             '<div class="font-bold text-slate-800 text-sm flex items-center gap-1">' +
-            '<i class="fa-solid fa-school text-teal-700"></i> Escuela Proverbios 22:6</div>' +
-            '<div class="text-[11px] text-slate-500 mt-1">Depósitos a Banpaís <strong>' + this.schoolYear + '</strong></div></td>';
+            '<i class="fa-solid fa-school text-teal-700"></i> ' + CFG.SCHOOL_NAME + '</div>' +
+            '<div class="text-[11px] text-slate-500 mt-1">Depósitos a ' + CFG.DEFAULT_BANK + ' <strong>' + this.schoolYear + '</strong></div></td>';
         let cells = '';
         for (let m = 0; m < 12; m++) {
             const rec = this.getSchoolDeposit(this.schoolYear, m);
@@ -1110,12 +1278,14 @@ class IHSSApp {
                 }
             }
         });
-        const expected = 5 * 12 * BASE_FEE;
-        const percent = Math.round((totalCollected / expected) * 100);
+        // MEJORA (Regla 1): usar BROTHERS.length en vez de 5 hardcodeado
+        const expected = BROTHERS.length * 12 * CFG.BASE_FEE;
+        const percent = expected > 0 ? Math.round((totalCollected / expected) * 100) : 0;
+
         document.getElementById('kpiTotalExpected').textContent = 'L. ' + expected.toLocaleString('es-HN') + '.00';
         document.getElementById('kpiTotalCollected').textContent = 'L. ' + totalCollected.toLocaleString('es-HN', { minimumFractionDigits: 2 });
         document.getElementById('kpiCollectionPercent').textContent = percent + '% de la meta anual';
-        document.getElementById('kpiCurrentMonthStatus').textContent = currentMonthPaid + ' / 5';
+        document.getElementById('kpiCurrentMonthStatus').textContent = currentMonthPaid + ' / ' + BROTHERS.length;
         document.getElementById('kpiMonthName').textContent = 'Hermanos al día en ' + MONTH_NAMES[cmi];
 
         let schoolTotal = 0;
