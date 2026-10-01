@@ -12,22 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: {
-                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
-                            400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
-                            800: '#065f46', 900: '#064e3b', 950: '#022c22',
-                        }
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
+            theme: { extend: {
+                colors: { emerald: {
+                    50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',
+                    500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b',950:'#022c22'
+                }},
+                fontFamily: { sans: ['Inter', 'sans-serif'] }
+            }}
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -35,1120 +30,1069 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <header class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-800 text-white shadow-xl sticky top-0 z-30 border-b border-emerald-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
-                        <i class="fa-solid fa-file-invoice-dollar text-2xl sm:text-3xl text-emerald-300"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">Registro de Cuotas IHSS Madre</h1>
-                        <p class="text-xs sm:text-sm text-emerald-200 flex items-center gap-1.5 mt-0.5">
-                            <i class="fa-solid fa-user-shield text-emerald-300"></i>
-                            <span>Administrador: <strong class="text-white font-semibold">Ricardo Cruz</strong></span>
-                        </p>
-                    </div>
+<header class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-800 text-white shadow-xl sticky top-0 z-30 border-b border-emerald-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-file-invoice-dollar text-2xl sm:text-3xl text-emerald-300"></i>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
-                    <button id="adminStatusBtn" onclick="app.toggleAdminAuth()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95">
-                        <i class="fa-solid fa-key text-emerald-300"></i>
-                        <span id="adminBtnText">Ingresar Clave</span>
-                    </button>
-                    <button id="syncBtn" onclick="app.syncFromCloud()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
-                        <i id="syncIcon" class="fa-solid fa-cloud-arrow-down text-emerald-300"></i>
-                        <span id="syncStatusText">Sincronizar</span>
-                    </button>
-                    <button id="changePassBtn" onclick="app.openChangePassModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
-                        <i class="fa-solid fa-lock-rotate text-emerald-300"></i>
-                        <span>Cambiar Contraseña</span>
-                    </button>
-                    <button id="mainRegisterPayBtn" onclick="app.openPaymentModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all shadow-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border border-emerald-200 cursor-pointer active:scale-95">
-                        <i class="fa-solid fa-circle-plus text-base"></i>
-                        <span>Registrar Pagos</span>
-                    </button>
-                    <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
-                        <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
-                        <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año:</span>
-                        <select id="selectedYear" onchange="app.changeYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer">
-                            <option value="2027" class="text-slate-900">2027</option>
-                            <option value="2026" class="text-slate-900" selected>2026</option>
-                            <option value="2025" class="text-slate-900">2025</option>
-                            <option value="2024" class="text-slate-900">2024</option>
-                            <option value="2023" class="text-slate-900">2023</option>
-                        </select>
-                    </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">Registro de Cuotas IHSS Madre</h1>
+                    <p class="text-xs sm:text-sm text-emerald-200 flex items-center gap-1.5 mt-0.5">
+                        <i class="fa-solid fa-user-shield text-emerald-300"></i>
+                        <span>Administrador: <strong class="text-white font-semibold">Ricardo Cruz</strong></span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                <button id="adminStatusBtn" onclick="app.toggleAdminAuth()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-key text-emerald-300"></i>
+                    <span id="adminBtnText">Ingresar Clave</span>
+                </button>
+                <button id="syncBtn" onclick="app.syncFromCloud()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
+                    <i id="syncIcon" class="fa-solid fa-cloud-arrow-down text-emerald-300"></i>
+                    <span id="syncStatusText">Sincronizar</span>
+                </button>
+                <button id="changePassBtn" onclick="app.openChangePassModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-md bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-500/30 text-white cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-lock-rotate text-emerald-300"></i>
+                    <span>Cambiar Contraseña</span>
+                </button>
+                <button id="mainRegisterPayBtn" onclick="app.openPaymentModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all shadow-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 border border-emerald-200 cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-circle-plus text-base"></i>
+                    <span>Registrar Pagos</span>
+                </button>
+                <div class="flex items-center bg-emerald-950/90 hover:bg-emerald-950 rounded-xl px-3 py-1.5 border border-emerald-600/60 shadow-inner">
+                    <i class="fa-solid fa-calendar-days text-emerald-300 mr-2 text-xs"></i>
+                    <span class="text-xs font-bold text-emerald-200 mr-1.5 hidden sm:inline">Año:</span>
+                    <select id="selectedYear" onchange="app.changeYear(this.value)" class="bg-transparent text-white text-xs sm:text-sm font-black focus:outline-none cursor-pointer">
+                        <option value="2027" class="text-slate-900">2027</option>
+                        <option value="2026" class="text-slate-900" selected>2026</option>
+                        <option value="2025" class="text-slate-900">2025</option>
+                        <option value="2024" class="text-slate-900">2024</option>
+                        <option value="2023" class="text-slate-900">2023</option>
+                    </select>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
 
-        <div id="readOnlyBanner" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="p-2 bg-amber-100 rounded-lg text-amber-700"><i class="fa-solid fa-eye text-lg"></i></div>
-                <div>
-                    <h4 class="text-sm font-bold text-amber-900">Modo Solo Lectura</h4>
-                    <p class="text-xs text-amber-700">Cualquiera puede consultar las aportaciones. Para modificar, registrar o eliminar datos, presione el botón <strong>"Ingresar Clave"</strong>.</p>
-                </div>
+    <div id="readOnlyBanner" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-amber-100 rounded-lg text-amber-700"><i class="fa-solid fa-eye text-lg"></i></div>
+            <div>
+                <h4 class="text-sm font-bold text-amber-900">Modo Solo Lectura</h4>
+                <p class="text-xs text-amber-700">Cualquiera puede consultar. Para modificar, presione <strong>"Ingresar Clave"</strong>.</p>
             </div>
-            <button onclick="app.openLoginModal()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 rounded-lg font-bold transition shadow flex items-center gap-1.5 whitespace-nowrap">
-                <i class="fa-solid fa-key text-xs"></i> Autenticarse
+        </div>
+        <button onclick="app.openLoginModal()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 rounded-lg font-bold transition shadow flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-key text-xs"></i> Autenticarse
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Meta Anual (5 Hermanos)</p>
+                <p id="kpiTotalExpected" class="text-2xl font-black text-slate-800 mt-1">L. 19,800.00</p>
+                <span class="text-[11px] text-slate-500 font-medium">L. 330.00 c/u × 12 meses</span>
+            </div>
+            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
+                <i class="fa-solid fa-calculator text-xl"></i>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recaudado <span class="currentYearLabel">2026</span></p>
+                <p id="kpiTotalCollected" class="text-2xl font-black text-emerald-700 mt-1">L. 0.00</p>
+                <span id="kpiCollectionPercent" class="text-[11px] text-emerald-800 font-bold">0% acumulado</span>
+            </div>
+            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
+                <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cumplimiento Mes Actual</p>
+                <p id="kpiCurrentMonthStatus" class="text-2xl font-black text-emerald-700 mt-1">0 / 5</p>
+                <span id="kpiMonthName" class="text-[11px] text-slate-500 font-medium">Hermanos al día</span>
+            </div>
+            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
+                <i class="fa-solid fa-calendar-check text-xl"></i>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Escuela Proverbios 22:6</p>
+                <p id="kpiSchoolTotal" class="text-2xl font-black text-teal-800 mt-1">L. 0.00</p>
+                <span class="text-[11px] text-teal-700 font-medium">Total depósitos <span class="currentYearLabel">2026</span></span>
+            </div>
+            <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-700 border border-teal-100">
+                <i class="fa-solid fa-building-columns text-xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATRIZ HERMANOS -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-5 sm:p-6 bg-slate-50/70 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-emerald-700"></i>
+                    Aportaciones de los Hermanos - <span class="currentYearLabel text-emerald-800">2026</span>
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por hermano.</p>
+            </div>
+            <button onclick="app.openPaymentModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-plus-circle"></i> Registrar Pago
             </button>
         </div>
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse min-w-[900px]">
+                <thead>
+                    <tr class="bg-slate-100/80 text-slate-700 text-[11px] uppercase tracking-wider font-extrabold border-b border-slate-200">
+                        <th class="py-3 px-4 w-52 sticky left-0 bg-slate-100 z-10">Hermano / Teléfono</th>
+                        <th class="py-3 px-2 text-center">Ene</th><th class="py-3 px-2 text-center">Feb</th>
+                        <th class="py-3 px-2 text-center">Mar</th><th class="py-3 px-2 text-center">Abr</th>
+                        <th class="py-3 px-2 text-center">May</th><th class="py-3 px-2 text-center">Jun</th>
+                        <th class="py-3 px-2 text-center">Jul</th><th class="py-3 px-2 text-center">Ago</th>
+                        <th class="py-3 px-2 text-center">Sep</th><th class="py-3 px-2 text-center">Oct</th>
+                        <th class="py-3 px-2 text-center">Nov</th><th class="py-3 px-2 text-center">Dic</th>
+                        <th class="py-3 px-4 text-right">Total Año</th>
+                    </tr>
+                </thead>
+                <tbody id="brothersMatrixBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
+            </table>
+        </div>
+    </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+    <!-- MATRIZ ESCUELA (NUEVA) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-5 sm:p-6 bg-emerald-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="p-2 bg-white/10 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-lg"></i></span>
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Meta Anual (5 Hermanos)</p>
-                    <p id="kpiTotalExpected" class="text-2xl font-black text-slate-800 mt-1">L. 19,800.00</p>
-                    <span class="text-[11px] text-slate-500 font-medium">L. 330.00 c/u × 12 meses</span>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
-                    <i class="fa-solid fa-calculator text-xl"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recaudado <span class="currentYearLabel">2026</span></p>
-                    <p id="kpiTotalCollected" class="text-2xl font-black text-emerald-700 mt-1">L. 0.00</p>
-                    <span id="kpiCollectionPercent" class="text-[11px] text-emerald-800 font-bold">0% acumulado</span>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
-                    <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cumplimiento Mes Actual</p>
-                    <p id="kpiCurrentMonthStatus" class="text-2xl font-black text-emerald-700 mt-1">0 / 5</p>
-                    <span id="kpiMonthName" class="text-[11px] text-slate-500 font-medium">Hermanos al día</span>
-                </div>
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-700 border border-emerald-100">
-                    <i class="fa-solid fa-calendar-check text-xl"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Escuela Proverbios 22:6</p>
-                    <p id="kpiSchoolTotal" class="text-2xl font-black text-teal-800 mt-1">L. 0.00</p>
-                    <span class="text-[11px] text-teal-700 font-medium">Total depósitos banco</span>
-                </div>
-                <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-700 border border-teal-100">
-                    <i class="fa-solid fa-building-columns text-xl"></i>
+                    <h3 class="text-lg font-black tracking-tight text-white">Depósitos a Escuela Proverbios 22:6 - <span class="currentYearLabel">2026</span></h3>
+                    <p class="text-xs text-emerald-200 mt-0.5">Depósitos mensuales al banco Banpaís. Click en cada mes para registrar.</p>
                 </div>
             </div>
         </div>
+        <!-- Scroll horizontal + vertical -->
+        <div class="overflow-x-auto overflow-y-auto custom-scrollbar max-h-96">
+            <table class="w-full text-left border-collapse min-w-[900px]">
+                <thead class="sticky top-0 z-10">
+                    <tr class="bg-slate-100/95 text-slate-700 text-[11px] uppercase tracking-wider font-extrabold border-b border-slate-200">
+                        <th class="py-3 px-4 w-52 sticky left-0 bg-slate-100 z-20">Beneficiario</th>
+                        <th class="py-3 px-2 text-center">Ene</th><th class="py-3 px-2 text-center">Feb</th>
+                        <th class="py-3 px-2 text-center">Mar</th><th class="py-3 px-2 text-center">Abr</th>
+                        <th class="py-3 px-2 text-center">May</th><th class="py-3 px-2 text-center">Jun</th>
+                        <th class="py-3 px-2 text-center">Jul</th><th class="py-3 px-2 text-center">Ago</th>
+                        <th class="py-3 px-2 text-center">Sep</th><th class="py-3 px-2 text-center">Oct</th>
+                        <th class="py-3 px-2 text-center">Nov</th><th class="py-3 px-2 text-center">Dic</th>
+                        <th class="py-3 px-4 text-right">Total Año</th>
+                    </tr>
+                </thead>
+                <tbody id="schoolMatrixBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
+            </table>
+        </div>
+    </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 sm:p-6 bg-slate-50/70 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+</main>
+
+<footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+        <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span></p>
+        <p class="text-slate-500 text-[11px]">Administrador responsable: <strong>Ricardo Cruz</strong> | Escuela Proverbios 22:6</p>
+    </div>
+</footer>
+
+<!-- MODAL LOGIN -->
+<div id="loginModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+        <div class="p-6 bg-emerald-900 text-white text-center relative">
+            <button onclick="app.closeModal('loginModal')" class="absolute top-4 right-4 text-emerald-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-16 h-16 bg-emerald-800/80 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-emerald-700">
+                <i class="fa-solid fa-lock text-2xl text-emerald-300"></i>
+            </div>
+            <h3 class="text-xl font-black">Acceso de Administrador</h3>
+            <p class="text-xs text-emerald-200 mt-1">Ingrese la contraseña</p>
+        </div>
+        <form onsubmit="app.handleLogin(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+                <input type="password" id="loginPassInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+            </div>
+            <div id="loginError" class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 text-center font-semibold">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Contraseña incorrecta.
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+                <button type="button" onclick="app.closeModal('loginModal')" class="w-1/2 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
+                <button type="submit" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Ingresar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL CAMBIAR PASS -->
+<div id="changePassModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+        <div class="p-6 bg-emerald-900 text-white text-center relative">
+            <button onclick="app.closeModal('changePassModal')" class="absolute top-4 right-4 text-emerald-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-black">Cambiar Contraseña</h3>
+        </div>
+        <form onsubmit="app.handleChangePass(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña Actual</label>
+                <input type="password" id="currPassInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nueva Contraseña</label>
+                <input type="password" id="newPassInput" required minlength="8" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Confirmar Nueva</label>
+                <input type="password" id="confirmPassInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 outline-none text-sm">
+            </div>
+            <div id="passChangeMsg" class="hidden text-xs p-2.5 rounded-xl text-center font-semibold"></div>
+            <div class="flex items-center gap-3 pt-2">
+                <button type="button" onclick="app.closeModal('changePassModal')" class="w-1/2 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
+                <button type="submit" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL PAGO HERMANO -->
+<div id="paymentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="p-5 bg-emerald-900 text-white flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-emerald-800 rounded-xl text-emerald-300"><i class="fa-solid fa-receipt text-xl"></i></div>
                 <div>
-                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-emerald-700"></i>
-                        Aportaciones de los Hermanos - <span class="currentYearLabel text-emerald-800">2026</span>
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Cuota mensual fijada: <strong class="text-slate-700">L. 330.00</strong> por cada hermano.</p>
+                    <h3 class="text-lg font-black">Registrar Pago IHSS</h3>
+                    <p class="text-xs text-emerald-200">Aportación de hermano</p>
                 </div>
+            </div>
+            <button onclick="app.closeModal('paymentModal')" class="text-emerald-300 hover:text-white text-2xl font-bold"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onsubmit="app.handleSavePayment(event)" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Hermano</label>
+                    <select id="payBrotherId" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold">
+                        <option value="1">1.- Jose</option><option value="2">2.- Oscar</option>
+                        <option value="3">3.- Kevin</option><option value="4">4.- Elvin</option>
+                        <option value="5">5.- Cristopher</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mes</label>
+                    <select id="payMonthIdx" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold">
+                        <option value="0">Enero</option><option value="1">Febrero</option>
+                        <option value="2">Marzo</option><option value="3">Abril</option>
+                        <option value="4">Mayo</option><option value="5">Junio</option>
+                        <option value="6">Julio</option><option value="7">Agosto</option>
+                        <option value="8">Septiembre</option><option value="9">Octubre</option>
+                        <option value="10">Noviembre</option><option value="11">Diciembre</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto (L.)</label>
+                    <input type="number" id="payAmount" required min="1" step="0.01" value="330" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-emerald-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha</label>
+                    <input type="date" id="payDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Voucher</label>
+                <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
+                <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
+                    <img id="voucherPreviewImg" src="" class="max-h-48 mx-auto object-contain py-2">
+                    <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Notas</label>
+                <input type="text" id="payNotes" placeholder="Opcional..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
+            </div>
+            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 space-y-2">
+                <p class="text-[11px] font-bold text-emerald-900 uppercase">WhatsApp</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button type="button" onclick="app.sendWhatsAppConfirmation()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp"></i> Confirmar Pago
+                    </button>
+                    <button type="button" onclick="app.sendWhatsAppReminder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp"></i> Recordatorio
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-200">
+                <button type="button" id="btnDeletePayment" onclick="app.deletePaymentRecord()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3.5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                </button>
                 <div class="flex items-center gap-2">
-                    <button onclick="app.openPaymentModal()" class="admin-only hidden bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3.5 py-2 rounded-xl font-bold transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus-circle"></i>
-                        <span>Registrar Pago / Adelanto</span>
+                    <button type="button" onclick="app.closeModal('paymentModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
+                    <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL ESCUELA (NUEVO) -->
+<div id="schoolModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="p-5 bg-emerald-950 text-white flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-emerald-800 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-xl"></i></div>
+                <div>
+                    <h3 class="text-lg font-black">Depósito a Escuela Proverbios 22:6</h3>
+                    <p id="schoolMonthLabel" class="text-xs text-emerald-200">—</p>
+                </div>
+            </div>
+            <button onclick="app.closeModal('schoolModal')" class="text-emerald-300 hover:text-white text-2xl font-bold"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onsubmit="app.handleSaveSchoolDeposit(event)" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
+                <p class="text-xs text-emerald-900">
+                    <i class="fa-solid fa-calendar-days mr-1"></i>
+                    Mes: <strong id="schoolMonthDisplay">—</strong>
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto Depositado (L.)</label>
+                    <input type="number" id="schoolAmount" required min="1" step="0.01" placeholder="Ej. 1650.00" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-emerald-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha del Depósito</label>
+                    <input type="date" id="schoolDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banco</label>
+                    <input type="text" id="schoolBank" required value="Banpaís" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nº Comprobante</label>
+                    <input type="text" id="schoolRef" placeholder="Opcional" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante</label>
+                <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
+                <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
+                    <img id="schoolVoucherPreviewImg" src="" class="max-h-40 mx-auto object-contain py-2">
+                    <button type="button" onclick="app.removeSchoolVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
             </div>
-
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[900px]">
-                    <thead>
-                        <tr class="bg-slate-100/80 text-slate-700 text-[11px] uppercase tracking-wider font-extrabold border-b border-slate-200">
-                            <th class="py-3 px-4 w-52">Hermano / Teléfono</th>
-                            <th class="py-3 px-2 text-center">Ene</th><th class="py-3 px-2 text-center">Feb</th>
-                            <th class="py-3 px-2 text-center">Mar</th><th class="py-3 px-2 text-center">Abr</th>
-                            <th class="py-3 px-2 text-center">May</th><th class="py-3 px-2 text-center">Jun</th>
-                            <th class="py-3 px-2 text-center">Jul</th><th class="py-3 px-2 text-center">Ago</th>
-                            <th class="py-3 px-2 text-center">Sep</th><th class="py-3 px-2 text-center">Oct</th>
-                            <th class="py-3 px-2 text-center">Nov</th><th class="py-3 px-2 text-center">Dic</th>
-                            <th class="py-3 px-4 text-right">Total Año</th>
-                        </tr>
-                    </thead>
-                    <tbody id="brothersMatrixBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
-                </table>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Notas</label>
+                <input type="text" id="schoolNotes" placeholder="Opcional..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
             </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 sm:p-6 bg-emerald-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="p-2 bg-white/10 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-lg"></i></span>
-                        <div>
-                            <h3 class="text-lg font-black tracking-tight text-white">Depositos a la escuela Proverbios 22:6</h3>
-                            <p class="text-xs text-emerald-200 mt-0.5">Registro de transferencias y depósitos bancarios consolidados al banco.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="app.openSchoolDepositModal()" class="admin-only hidden bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-file-circle-plus"></i>
-                        <span>Registrar Depósito Bancario</span>
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-200">
+                <button type="button" id="btnDeleteSchool" onclick="app.deleteSchoolDeposit()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3.5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                </button>
+                <div class="flex items-center gap-2 flex-wrap justify-end">
+                    <button type="button" onclick="app.closeModal('schoolModal')" class="px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
+                    <button type="button" onclick="app.handleSaveSchoolDeposit(event, true)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp"></i> Guardar y Avisar
                     </button>
+                    <button type="submit" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-3 py-2.5 rounded-xl text-xs transition shadow-md">Guardar</button>
                 </div>
             </div>
-            <div class="p-5 sm:p-6 bg-slate-50/30">
-                <div id="schoolDepositsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-            <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span></p>
-            <p class="text-slate-500 text-[11px]">Administrador responsable: <strong>Ricardo Cruz</strong> | Escuela Proverbios 22:6</p>
-        </div>
-    </footer>
-
-    <!-- MODAL LOGIN -->
-    <div id="loginModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 transform transition-all">
-            <div class="p-6 bg-emerald-900 text-white text-center relative">
-                <button onclick="app.closeModal('loginModal')" class="absolute top-4 right-4 text-emerald-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-                <div class="w-16 h-16 bg-emerald-800/80 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-emerald-700">
-                    <i class="fa-solid fa-lock text-2xl text-emerald-300"></i>
-                </div>
-                <h3 class="text-xl font-black">Acceso de Administrador</h3>
-                <p class="text-xs text-emerald-200 mt-1">Ingrese la contraseña para editar o eliminar registros</p>
-            </div>
-            <form onsubmit="app.handleLogin(event)" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña de Administrador</label>
-                    <div class="relative">
-                        <input type="password" id="loginPassInput" required placeholder="Ingrese contraseña..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-sm">
-                        <i class="fa-solid fa-key text-slate-400 absolute left-3.5 top-3.5 text-sm"></i>
-                    </div>
-                    <p class="text-[11px] text-slate-400 mt-1">Solo el administrador autorizado conoce la clave.</p>
-                </div>
-                <div id="loginError" class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 text-center font-semibold">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Contraseña incorrecta. Intente de nuevo.
-                </div>
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="button" onclick="app.closeModal('loginModal')" class="w-1/2 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Ingresar</button>
-                </div>
-            </form>
-        </div>
+        </form>
     </div>
+</div>
 
-    <!-- MODAL CAMBIAR PASS -->
-    <div id="changePassModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
-            <div class="p-6 bg-emerald-900 text-white text-center relative">
-                <button onclick="app.closeModal('changePassModal')" class="absolute top-4 right-4 text-emerald-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-                <div class="w-16 h-16 bg-emerald-800/80 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-emerald-700">
-                    <i class="fa-solid fa-key text-2xl text-emerald-300"></i>
-                </div>
-                <h3 class="text-xl font-black">Cambiar Contraseña</h3>
-                <p class="text-xs text-emerald-200 mt-1">Actualice la clave de acceso de Ricardo Cruz</p>
-            </div>
-            <form onsubmit="app.handleChangePass(event)" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña Actual</label>
-                    <input type="password" id="currPassInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nueva Contraseña</label>
-                    <input type="password" id="newPassInput" required minlength="8" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
-                    <p class="text-[10px] text-slate-400 mt-1">Mínimo 8 caracteres. Se recomienda mezclar mayúsculas, números y símbolos.</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Confirmar Nueva Contraseña</label>
-                    <input type="password" id="confirmPassInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
-                </div>
-                <div id="passChangeMsg" class="hidden text-xs p-2.5 rounded-xl text-center font-semibold"></div>
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="button" onclick="app.closeModal('changePassModal')" class="w-1/2 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Guardar Clave</button>
-                </div>
-            </form>
-        </div>
+<!-- LIGHTBOX -->
+<div id="imageLightboxModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden" onclick="app.closeModal('imageLightboxModal')">
+    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+        <button onclick="app.closeModal('imageLightboxModal')" class="absolute -top-10 right-0 text-white text-3xl hover:text-emerald-400 font-bold"><i class="fa-solid fa-xmark"></i></button>
+        <img id="lightboxImg" src="" class="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl">
+        <p id="lightboxCaption" class="text-white text-xs mt-3 bg-slate-800/80 px-4 py-2 rounded-full font-semibold border border-slate-700 text-center"></p>
     </div>
+</div>
 
-    <!-- MODAL PAGO -->
-    <div id="paymentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
-            <div class="p-5 bg-emerald-900 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-emerald-800 rounded-xl text-emerald-300"><i class="fa-solid fa-receipt text-xl"></i></div>
-                    <div>
-                        <h3 id="paymentModalTitle" class="text-lg font-black">Registrar Pago IHSS</h3>
-                        <p class="text-xs text-emerald-200">Aportación mensual de cuota</p>
-                    </div>
-                </div>
-                <button onclick="app.closeModal('paymentModal')" class="text-emerald-300 hover:text-white text-2xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="app.handleSavePayment(event)" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Hermano Aportante</label>
-                        <select id="payBrotherId" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold">
-                            <option value="1">1.- Jose</option><option value="2">2.- Oscar</option>
-                            <option value="3">3.- Kevin</option><option value="4">4.- Elvin</option>
-                            <option value="5">5.- Cristopher</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mes de Aportación</label>
-                        <select id="payMonthIdx" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold">
-                            <option value="0">Enero</option><option value="1">Febrero</option>
-                            <option value="2">Marzo</option><option value="3">Abril</option>
-                            <option value="4">Mayo</option><option value="5">Junio</option>
-                            <option value="6">Julio</option><option value="7">Agosto</option>
-                            <option value="8">Septiembre</option><option value="9">Octubre</option>
-                            <option value="10">Noviembre</option><option value="11">Diciembre</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto Cancelado (Lempiras)</label>
-                        <input type="number" id="payAmount" required min="1" step="0.01" value="330" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-bold text-emerald-800">
-                        <p class="text-[10px] text-slate-400 mt-1">Cuota fija base: L. 330.00</p>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha de Pago</label>
-                        <input type="date" id="payDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Imagen del Voucher / Comprobante WhatsApp</label>
-                    <input type="file" id="payVoucherInput" accept="image/*" onchange="app.handleVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Tamaño máximo permitido: 5 MB</p>
-                    <div id="voucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
-                        <img id="voucherPreviewImg" src="" alt="Voucher Preview" class="max-h-48 mx-auto object-contain py-2">
-                        <button type="button" onclick="app.removeVoucherPreview()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow hover:bg-red-700">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observaciones / Notas (Opcional)</label>
-                    <input type="text" id="payNotes" placeholder="Ej. Pago adelantado..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
-                </div>
-                <div class="admin-only hidden bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 space-y-2">
-                    <p class="text-[11px] font-bold text-emerald-900 uppercase">Notificaciones por WhatsApp</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button type="button" onclick="app.sendWhatsAppConfirmation()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Confirmar Pago
-                        </button>
-                        <button type="button" onclick="app.sendWhatsAppReminder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Recordatorio
-                        </button>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-200">
-                    <button type="button" id="btnDeletePayment" onclick="app.deletePaymentRecord()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3.5 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-trash-can"></i> Eliminar
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="app.closeModal('paymentModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
-                        <button type="submit" id="btnSavePaymentSubmit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar Registro</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+<script>
+const BROTHERS = [
+    { id: 1, name: "Jose", phone: "+50488029422", displayPhone: "+504 88029422" },
+    { id: 2, name: "Oscar", phone: "+50433896279", displayPhone: "+504 33896279" },
+    { id: 3, name: "Kevin", phone: "+50431745793", displayPhone: "+504 31745793" },
+    { id: 4, name: "Elvin", phone: "+50432822654", displayPhone: "+504 32822654" },
+    { id: 5, name: "Cristopher", phone: "+50431809663", displayPhone: "+504 31809663" }
+];
 
-    <!-- MODAL ESCUELA -->
-    <div id="schoolModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100">
-            <div class="p-5 bg-emerald-950 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-emerald-800 rounded-xl text-emerald-300"><i class="fa-solid fa-school text-xl"></i></div>
-                    <div>
-                        <h3 class="text-lg font-black">Depósito Escuela Proverbios 22:6</h3>
-                        <p class="text-xs text-emerald-200">Registro de depósito bancario general</p>
-                    </div>
-                </div>
-                <button onclick="app.closeModal('schoolModal')" class="text-emerald-300 hover:text-white text-2xl font-bold"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="app.handleSaveSchoolDeposit(event)" class="p-6 space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Monto Depositado (L.)</label>
-                        <input type="number" id="schoolAmount" required min="1" step="0.01" placeholder="Ej. 1650.00" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm font-bold text-emerald-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Fecha de Depósito</label>
-                        <input type="date" id="schoolDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banco Destino</label>
-                        <input type="text" id="schoolBank" required value="Banpaís" placeholder="Ej. Banpaís" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nº Comprobante / Referencia</label>
-                        <input type="text" id="schoolRef" placeholder="Ej. #REF-884920" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto del Comprobante Bancario</label>
-                    <input type="file" id="schoolVoucherInput" accept="image/*" onchange="app.handleSchoolVoucherPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Tamaño máximo permitido: 5 MB</p>
-                    <div id="schoolVoucherPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 hidden bg-slate-100 text-center">
-                        <img id="schoolVoucherPreviewImg" src="" alt="Deposit Preview" class="max-h-40 mx-auto object-contain py-2">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Detalles / Nota Adicional</label>
-                    <input type="text" id="schoolNotes" placeholder="Ej. Aportaciones acumuladas de Septiembre..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs">
-                </div>
-                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200/80 text-xs text-emerald-900">
-                    <i class="fa-brands fa-whatsapp text-emerald-700 mr-1"></i>
-                    Al guardar, se abrirá WhatsApp automáticamente para avisar a <strong>Nadia</strong>.
-                </div>
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
-                    <button type="button" onclick="app.closeModal('schoolModal')" class="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs transition">Cancelar</button>
-                    <button type="submit" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md">Guardar y Avisar</button>
-                </div>
-            </form>
-        </div>
-    </div>
+const NADIA_PHONE = "+50498124228";
+const _pc = [73,72,83,83,109,97,100,114,101,50,48,50,54,33,82,120];
+const DEFAULT_ADMIN_PASSWORD = String.fromCharCode.apply(null, _pc);
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const BASE_FEE = 330;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBot1zQ7tbkE_PYYLSL2ndzSEOPyfNdsSglYOiuqV8Rvdbyd40oV6AkVA/exec";
 
-    <!-- LIGHTBOX -->
-    <div id="imageLightboxModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden" onclick="app.closeModal('imageLightboxModal')">
-        <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
-            <button onclick="app.closeModal('imageLightboxModal')" class="absolute -top-10 right-0 text-white text-3xl hover:text-emerald-400 font-bold"><i class="fa-solid fa-xmark"></i></button>
-            <img id="lightboxImg" src="" alt="Voucher Full" class="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl">
-            <p id="lightboxCaption" class="text-white text-xs mt-3 bg-slate-800/80 px-4 py-2 rounded-full font-semibold border border-slate-700 text-center"></p>
-        </div>
-    </div>
+class IHSSApp {
+    constructor() {
+        this.selectedYear = "2026";
+        this.isAdmin = false;
+        this.adminPassword = localStorage.getItem('ihss_admin_pass') || DEFAULT_ADMIN_PASSWORD;
+        this.tempVoucherBase64 = null;
+        this.tempSchoolVoucherBase64 = null;
+        this.currentSchoolMonth = new Date().getMonth();
+        this.localVersion = 0;
 
-    <script>
-        const BROTHERS = [
-            { id: 1, name: "Jose", phone: "+50488029422", displayPhone: "+504 88029422" },
-            { id: 2, name: "Oscar", phone: "+50433896279", displayPhone: "+504 33896279" },
-            { id: 3, name: "Kevin", phone: "+50431745793", displayPhone: "+504 31745793" },
-            { id: 4, name: "Elvin", phone: "+50432822654", displayPhone: "+504 32822654" },
-            { id: 5, name: "Cristopher", phone: "+50431809663", displayPhone: "+504 31809663" }
-        ];
+        this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
+        this.STORAGE_KEY_SCHOOL = 'ihss_school_deposits_v2';
 
-        const NADIA_PHONE = "+50498124228";
+        this.payments = this.loadPayments();
+        this.schoolDeposits = this.loadSchoolDeposits();
+    }
 
-        const _pc = [73,72,83,83,109,97,100,114,101,50,48,50,54,33,82,120];
-        const DEFAULT_ADMIN_PASSWORD = String.fromCharCode.apply(null, _pc);
+    async init() {
+        this.renderAll();
+        this.updateAdminUI();
+        const cmi = new Date().getMonth();
+        document.getElementById('payMonthIdx').value = cmi;
+        document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
+        await this.syncFromCloud();
+        setInterval(() => { this.syncFromCloud(); }, 60000);
+    }
 
-        const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+    async syncFromCloud() {
+        const versionAtStart = this.localVersion;
+        const syncIcon = document.getElementById('syncIcon');
+        const syncText = document.getElementById('syncStatusText');
+        if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
+        if (syncText) syncText.textContent = "Sincronizando...";
+        try {
+            const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), { method: 'GET', cache: 'no-store' });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const data = await response.json();
 
-        const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const BASE_FEE = 330;
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGaFHyrM06pvBot1zQ7tbkE_PYYLSL2ndzSEOPyfNdsSglYOiuqV8Rvdbyd40oV6AkVA/exec";
-
-        class IHSSApp {
-            constructor() {
-                this.selectedYear = "2026";
-                this.isAdmin = false;
-                this.adminPassword = localStorage.getItem('ihss_admin_pass') || DEFAULT_ADMIN_PASSWORD;
-                this.tempVoucherBase64 = null;
-                this.tempSchoolVoucherBase64 = null;
-
-                this.localVersion = 0;
-
-                this.STORAGE_KEY_PAYMENTS = 'ihss_payments_data_v2';
-                this.STORAGE_KEY_SCHOOL = 'ihss_school_deposits_v2';
-
-                this.payments = this.loadPayments();
-                this.schoolDeposits = this.loadSchoolDeposits();
+            if (this.localVersion !== versionAtStart) {
+                if (syncIcon) syncIcon.className = "fa-solid fa-shield-halved text-emerald-300";
+                if (syncText) syncText.textContent = "Local protegido";
+                return;
             }
 
-            async init() {
-                this.renderAll();
-                this.updateAdminUI();
-
-                const currentMonthIdx = new Date().getMonth();
-                document.getElementById('payMonthIdx').value = currentMonthIdx;
-                document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
-
-                await this.syncFromCloud();
-
-                setInterval(() => {
-                    this.syncFromCloud();
-                }, 60000);
-            }
-
-            async syncFromCloud() {
-                const versionAtStart = this.localVersion;
-
-                const syncIcon = document.getElementById('syncIcon');
-                const syncText = document.getElementById('syncStatusText');
-                if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
-                if (syncText) syncText.textContent = "Sincronizando...";
-
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL + "?t=" + Date.now(), {
-                        method: 'GET',
-                        cache: 'no-store'
-                    });
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    const data = await response.json();
-
-                    if (this.localVersion !== versionAtStart) {
-                        console.log("⏭️ Sync descartado (v" + versionAtStart + " → v" + this.localVersion + ")");
-                        if (syncIcon) syncIcon.className = "fa-solid fa-shield-halved text-emerald-300";
-                        if (syncText) syncText.textContent = "Local protegido";
-                        return;
-                    }
-
-                    // Merge sin borrar locales
-                    if (data && data.payments && typeof data.payments === 'object') {
-                        const merged = {};
-                        for (const k in this.payments) merged[k] = this.payments[k];
-                        for (const k in data.payments) merged[k] = data.payments[k];
-                        this.payments = merged;
-                        this.savePayments();
-                    }
-                    if (data && Array.isArray(data.schoolDeposits) && data.schoolDeposits.length > 0) {
-                        const mergedSchool = [];
-                        const serverIds = {};
-                        data.schoolDeposits.forEach(d => { serverIds[d.id] = true; mergedSchool.push(d); });
-                        this.schoolDeposits.forEach(d => {
-                            if (!serverIds[d.id] && d.voucherImg && d.voucherImg.indexOf("data:") === 0) {
-                                mergedSchool.push(d);
-                            }
-                        });
-                        this.schoolDeposits = mergedSchool;
-                        this.saveSchoolDeposits();
-                    }
-                    this.renderAll();
-
-                    if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
-                    if (syncText) syncText.textContent = "Sincronizado";
-                } catch (err) {
-                    console.warn('No se pudo sincronizar:', err);
-                    if (syncIcon) syncIcon.className = "fa-solid fa-cloud text-emerald-300";
-                    if (syncText) syncText.textContent = "Sheets (Offline)";
-                }
-            }
-
-            async sendAction(payload) {
-                const syncIcon = document.getElementById('syncIcon');
-                const syncText = document.getElementById('syncStatusText');
-                if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
-                if (syncText) syncText.textContent = "Guardando...";
-
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    console.log("✅ Respuesta del servidor:", result);
-
-                    if (result.status === "success") {
-                        if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
-                        if (syncText) syncText.textContent = "Guardado en Sheets";
-                        return result;
-                    } else {
-                        console.error("Error del servidor:", result.message);
-                        if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
-                        if (syncText) syncText.textContent = "Error: " + (result.message || "desconocido");
-                        return null;
-                    }
-                } catch (err) {
-                    console.error('Error enviando a Sheets:', err);
-                    if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
-                    if (syncText) syncText.textContent = "Error al guardar";
-                    return null;
-                }
-            }
-
-            loadPayments() { const d = localStorage.getItem(this.STORAGE_KEY_PAYMENTS); return d ? JSON.parse(d) : {}; }
-            savePayments() { localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments)); }
-            loadSchoolDeposits() { const d = localStorage.getItem(this.STORAGE_KEY_SCHOOL); return d ? JSON.parse(d) : []; }
-            saveSchoolDeposits() { localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits)); }
-
-            changeYear(year) {
-                this.selectedYear = year;
-                document.querySelectorAll('.currentYearLabel').forEach(el => el.textContent = year);
-                this.renderAll();
-                this.syncFromCloud();
-            }
-
-            toggleAdminAuth() {
-                if (this.isAdmin) {
-                    if (confirm("¿Desea cerrar la sesión de administrador?")) {
-                        this.isAdmin = false;
-                        this.updateAdminUI();
-                    }
-                } else this.openLoginModal();
-            }
-
-            openLoginModal() {
-                document.getElementById('loginPassInput').value = '';
-                document.getElementById('loginError').classList.add('hidden');
-                document.getElementById('loginModal').classList.remove('hidden');
-            }
-
-            handleLogin(e) {
-                e.preventDefault();
-                const inputPass = document.getElementById('loginPassInput').value;
-                if (inputPass === this.adminPassword) {
-                    this.isAdmin = true;
-                    this.closeModal('loginModal');
-                    this.updateAdminUI();
-                } else document.getElementById('loginError').classList.remove('hidden');
-            }
-
-            openChangePassModal() {
-                document.getElementById('currPassInput').value = '';
-                document.getElementById('newPassInput').value = '';
-                document.getElementById('confirmPassInput').value = '';
-                document.getElementById('passChangeMsg').classList.add('hidden');
-                document.getElementById('changePassModal').classList.remove('hidden');
-            }
-
-            handleChangePass(e) {
-                e.preventDefault();
-                const currPass = document.getElementById('currPassInput').value;
-                const newPass = document.getElementById('newPassInput').value;
-                const confirmPass = document.getElementById('confirmPassInput').value;
-                const msgEl = document.getElementById('passChangeMsg');
-
-                if (currPass !== this.adminPassword) {
-                    msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
-                    msgEl.textContent = "La contraseña actual es incorrecta.";
-                    msgEl.classList.remove('hidden');
-                    return;
-                }
-                if (newPass.length < 8) {
-                    msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
-                    msgEl.textContent = "La nueva contraseña debe tener al menos 8 caracteres.";
-                    msgEl.classList.remove('hidden');
-                    return;
-                }
-                if (newPass !== confirmPass) {
-                    msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
-                    msgEl.textContent = "Las nuevas contraseñas no coinciden.";
-                    msgEl.classList.remove('hidden');
-                    return;
-                }
-                this.adminPassword = newPass;
-                localStorage.setItem('ihss_admin_pass', newPass);
-                msgEl.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-emerald-100 text-emerald-800";
-                msgEl.textContent = "¡Contraseña actualizada con éxito!";
-                msgEl.classList.remove('hidden');
-                setTimeout(() => this.closeModal('changePassModal'), 1200);
-            }
-
-            updateAdminUI() {
-                const btnText = document.getElementById('adminBtnText');
-                const adminBtn = document.getElementById('adminStatusBtn');
-                const banner = document.getElementById('readOnlyBanner');
-                const adminElements = document.querySelectorAll('.admin-only');
-
-                if (this.isAdmin) {
-                    btnText.textContent = "Admin Activo (Ricardo Cruz)";
-                    adminBtn.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-emerald-400 text-emerald-950 border border-emerald-200 cursor-pointer active:scale-95";
-                    banner.classList.add('hidden');
-                    adminElements.forEach(el => el.classList.remove('hidden'));
-                } else {
-                    btnText.textContent = "Ingresar Clave";
-                    adminBtn.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95";
-                    banner.classList.remove('hidden');
-                    adminElements.forEach(el => el.classList.add('hidden'));
-                }
-                this.renderAll();
-            }
-
-            closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
-
-            openPaymentModal(brotherId, monthIdx) {
-                if (typeof brotherId === "undefined") brotherId = 1;
-                if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
-
-                document.getElementById('payBrotherId').value = brotherId;
-                document.getElementById('payMonthIdx').value = monthIdx;
-                const record = this.getPayment(brotherId, this.selectedYear, monthIdx);
-
-                if (record) {
-                    document.getElementById('payAmount').value = record.amount || BASE_FEE;
-                    document.getElementById('payDate').value = record.date || new Date().toISOString().split('T')[0];
-                    document.getElementById('payNotes').value = record.notes || '';
-                    this.tempVoucherBase64 = record.voucherImg || null;
-                    if (record.voucherImg) {
-                        document.getElementById('voucherPreviewImg').src = record.voucherImg;
-                        document.getElementById('voucherPreviewContainer').classList.remove('hidden');
-                    } else this.removeVoucherPreview();
-                    document.getElementById('btnDeletePayment').classList.remove('hidden');
-                } else {
-                    document.getElementById('payAmount').value = BASE_FEE;
-                    document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
-                    document.getElementById('payNotes').value = '';
-                    this.removeVoucherPreview();
-                    document.getElementById('btnDeletePayment').classList.add('hidden');
-                }
-                document.getElementById('payVoucherInput').value = '';
-                document.getElementById('paymentModal').classList.remove('hidden');
-            }
-
-            handleVoucherPreview(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                if (file.size > MAX_IMAGE_SIZE) {
-                    alert("La imagen es demasiado grande.\n\nTamaño actual: " + (file.size / 1024 / 1024).toFixed(2) + " MB\nMáximo permitido: 5 MB\n\nPor favor, comprime la imagen o toma una captura más ligera.");
-                    e.target.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    this.tempVoucherBase64 = evt.target.result;
-                    document.getElementById('voucherPreviewImg').src = this.tempVoucherBase64;
-                    document.getElementById('voucherPreviewContainer').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-
-            removeVoucherPreview() {
-                this.tempVoucherBase64 = null;
-                document.getElementById('voucherPreviewImg').src = '';
-                document.getElementById('voucherPreviewContainer').classList.add('hidden');
-                document.getElementById('payVoucherInput').value = '';
-            }
-
-            // ✅ FIX: usa result.savedPayment para obtener el voucherUrl
-            async handleSavePayment(e) {
-                e.preventDefault();
-                const brotherId = parseInt(document.getElementById('payBrotherId').value);
-                const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
-                const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
-                const date = document.getElementById('payDate').value;
-                const notes = document.getElementById('payNotes').value;
-
-                if (!this.isAdmin) {
-                    alert("Debe autenticarse con la clave de administrador para guardar cambios.");
-                    this.openLoginModal();
-                    return;
-                }
-
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const key = this.selectedYear + "_" + brotherId + "_" + monthIdx;
-                const paymentObj = {
-                    amount: amount, date: date, notes: notes,
-                    voucherImg: this.tempVoucherBase64,
-                    updatedBy: 'Ricardo Cruz',
-                    timestamp: new Date().toISOString()
-                };
-
-                this.localVersion++;
-                this.setPayment(brotherId, this.selectedYear, monthIdx, paymentObj);
-                this.closeModal('paymentModal');
-                this.renderAll();
-
-                const result = await this.sendAction({
-                    action: "savePayment",
-                    key: key,
-                    brotherName: brother.name,
-                    monthName: MONTH_NAMES[monthIdx],
-                    year: this.selectedYear,
-                    data: paymentObj
-                });
-
-                // ✅ Usar el objeto devuelto directamente (fix principal)
-                if (result && result.savedPayment && result.savedPayment.voucherImg) {
-                    if (this.payments[key]) {
-                        this.payments[key].voucherImg = result.savedPayment.voucherImg;
-                        this.savePayments();
-                        this.renderAll();
-                        console.log("✅ Voucher URL actualizada:", result.savedPayment.voucherImg);
-                    }
-                }
-            }
-
-            async deletePaymentRecord() {
-                if (!this.isAdmin) { alert("Solo el administrador puede eliminar."); return; }
-                const brotherId = parseInt(document.getElementById('payBrotherId').value);
-                const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const key = this.selectedYear + "_" + brotherId + "_" + monthIdx;
-
-                if (confirm("¿ELIMINAR el pago de " + brother.name + " de " + MONTH_NAMES[monthIdx] + " " + this.selectedYear + "?")) {
-                    this.localVersion++;
-                    this.setPayment(brotherId, this.selectedYear, monthIdx, null);
-                    this.closeModal('paymentModal');
-                    this.renderAll();
-                    await this.sendAction({ action: "deletePayment", key: key });
-                }
-            }
-
-            getPayment(brotherId, year, monthIdx) {
-                const key = year + "_" + brotherId + "_" + monthIdx;
-                return this.payments[key] || null;
-            }
-
-            setPayment(brotherId, year, monthIdx, data) {
-                const key = year + "_" + brotherId + "_" + monthIdx;
-                if (data === null) delete this.payments[key];
-                else this.payments[key] = data;
+            if (data && data.payments && typeof data.payments === 'object') {
+                const merged = {};
+                for (const k in this.payments) merged[k] = this.payments[k];
+                for (const k in data.payments) merged[k] = data.payments[k];
+                this.payments = merged;
                 this.savePayments();
             }
-
-            // 📩 MENSAJE 1: Confirmación
-            sendWhatsAppConfirmation() {
-                if (!this.isAdmin) return;
-                const brotherId = parseInt(document.getElementById('payBrotherId').value);
-                const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
-                const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
-                const date = document.getElementById('payDate').value;
-                const notesInput = document.getElementById('payNotes').value.trim();
-
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const monthName = MONTH_NAMES[monthIdx];
-                const year = this.selectedYear;
-
-                const record = this.getPayment(brotherId, year, monthIdx);
-                const voucherUrl = (record && record.voucherImg && record.voucherImg.indexOf("http") === 0)
-                    ? record.voucherImg
-                    : '';
-
-                const notesText = notesInput || 'Registrado por Ricardo Cruz';
-                const amountText = amount.toLocaleString('es-HN', { minimumFractionDigits: 2 });
-
-                let message =
-                    "🧾 INFORME DE PAGO RECIBIDO - IHSS MADRE\n\n" +
-                    "Hola " + brother.name + ", confirmamos la recepción de tu aportación:\n\n" +
-                    "👤 Aportante: " + brother.name + "\n" +
-                    "📅 Mes(es) Cubierto(s): " + monthName + " (" + year + ")\n" +
-                    "💰 Monto Registrado: L. " + amountText + "\n" +
-                    "🗓️ Fecha: " + date + "\n" +
-                    "📌 Notas: " + notesText + "\n";
-
-                if (voucherUrl) {
-                    message += "\n🖼️ Ver comprobante registrado:\n" + voucherUrl + "\n";
+            if (data && data.schoolDeposits) {
+                let school = data.schoolDeposits;
+                if (Array.isArray(school)) {
+                    const migrated = {};
+                    school.forEach(d => {
+                        if (d && d.date) {
+                            const dt = new Date(d.date);
+                            if (!isNaN(dt.getTime())) migrated[dt.getFullYear() + "_" + dt.getMonth()] = d;
+                        }
+                    });
+                    school = migrated;
                 }
-
-                message += "\n✍️ Administrador: Ricardo Cruz\n¡Muchas gracias por estar al día! 🙏🏼🏼";
-
-                window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
-            }
-
-            // 📩 MENSAJE 2: Recordatorio
-            sendWhatsAppReminder() {
-                if (!this.isAdmin) return;
-                const brotherId = parseInt(document.getElementById('payBrotherId').value);
-                const monthIdx = parseInt(document.getElementById('payMonthIdx').value);
-                const brother = BROTHERS.find(b => b.id === brotherId);
-                const monthName = MONTH_NAMES[monthIdx];
-                const year = this.selectedYear;
-                const amountText = BASE_FEE.toLocaleString('es-HN', { minimumFractionDigits: 2 });
-
-                const message =
-                    "🔔 RECORDATORIO DE PAGO - IHSS MADRE\n\n" +
-                    "Hola " + brother.name + ", esperamos que estés muy bien. 😊\n\n" +
-                    "Aún no hemos recibido tu aportación correspondiente a:\n\n" +
-                    "👤 Aportante: " + brother.name + "\n" +
-                    "📅 Mes Pendiente: " + monthName + " (" + year + ")\n" +
-                    "💰 Monto a Transferir: L. " + amountText + "\n" +
-                    "📆 Estado: ⏳ Pendiente de pago\n\n" +
-                    "📸 Al realizar el pago, por favor envíanos la foto del comprobante para poder registrar tu aportación.\n\n" +
-                    "✍️ Administrador: Ricardo Cruz\n" +
-                    "¡Gracias por tu valiosa colaboración! 🙏🏼";
-
-                window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(message), '_blank');
-            }
-
-            // 📩 MENSAJE 3: Aviso a Nadia
-            buildNadiaMessage(deposit) {
-                if (!deposit) return '';
-                const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
-                const bank = deposit.bank || 'Banpaís';
-                const ref = deposit.ref || 'N/A';
-                const date = deposit.date || '';
-                const notes = deposit.notes || 'Sin notas adicionales';
-                const voucherUrl = (deposit.voucherImg && deposit.voucherImg.indexOf("http") === 0)
-                    ? deposit.voucherImg
-                    : '';
-
-                let message =
-                    "🏦 AVISO DE DEPÓSITO BANCARIO - ESCUELA PROVERBIOS 22:6\n\n" +
-                    "Hola Nadia, esperamos que estés muy bien. 😊\n\n" +
-                    "Te informamos que se ha realizado el depósito correspondiente a la cuota mensual del IHSS de Miriam García:\n\n" +
-                    "🏫 Destino: Escuela Proverbios 22:6\n" +
-                    "🏦 Banco: " + bank + "\n" +
-                    "💳 Nº Comprobante / Referencia: " + ref + "\n" +
-                    "💰 Monto Depositado: L. " + amountText + "\n" +
-                    "🗓️ Fecha del Depósito: " + date + "\n" +
-                    "📌 Notas: " + notes + "\n";
-
-                if (voucherUrl) {
-                    message += "\n🖼️ Ver comprobante del depósito:\n" + voucherUrl + "\n";
-                }
-
-                message += "\n✍️ Administrador: Ricardo Cruz\n¡Gracias por confirmar la recepción! 🙏🏼";
-
-                return "https://wa.me/" + NADIA_PHONE.replace('+', '') + "?text=" + encodeURIComponent(message);
-            }
-
-            openSchoolDepositModal() {
-                if (!this.isAdmin) { alert("Requiere ingresar la clave de administrador para registrar depósitos bancarios."); this.openLoginModal(); return; }
-                document.getElementById('schoolAmount').value = '';
-                document.getElementById('schoolBank').value = 'Banpaís';
-                document.getElementById('schoolRef').value = '';
-                document.getElementById('schoolNotes').value = '';
-                this.tempSchoolVoucherBase64 = null;
-                document.getElementById('schoolVoucherPreviewImg').src = '';
-                document.getElementById('schoolVoucherPreviewContainer').classList.add('hidden');
-                document.getElementById('schoolVoucherInput').value = '';
-                document.getElementById('schoolModal').classList.remove('hidden');
-            }
-
-            handleSchoolVoucherPreview(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                if (file.size > MAX_IMAGE_SIZE) {
-                    alert("La imagen es demasiado grande.\n\nTamaño actual: " + (file.size / 1024 / 1024).toFixed(2) + " MB\nMáximo permitido: 5 MB\n\nPor favor, comprime la imagen o toma una captura más ligera.");
-                    e.target.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    this.tempSchoolVoucherBase64 = evt.target.result;
-                    document.getElementById('schoolVoucherPreviewImg').src = this.tempSchoolVoucherBase64;
-                    document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-
-            async handleSaveSchoolDeposit(e) {
-                e.preventDefault();
-                const amount = parseFloat(document.getElementById('schoolAmount').value);
-                const date = document.getElementById('schoolDate').value;
-                const bank = document.getElementById('schoolBank').value;
-                const ref = document.getElementById('schoolRef').value;
-                const notes = document.getElementById('schoolNotes').value;
-
-                const newDeposit = {
-                    id: 'sch_' + Date.now(),
-                    amount: amount, date: date, bank: bank, ref: ref, notes: notes,
-                    voucherImg: this.tempSchoolVoucherBase64
-                };
-
-                const waWindow = window.open('about:blank', '_blank');
-
-                this.localVersion++;
-                this.schoolDeposits.unshift(newDeposit);
+                const merged = {};
+                for (const k in this.schoolDeposits) merged[k] = this.schoolDeposits[k];
+                for (const k in school) merged[k] = school[k];
+                this.schoolDeposits = merged;
                 this.saveSchoolDeposits();
-                this.closeModal('schoolModal');
+            }
+            this.renderAll();
+            if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
+            if (syncText) syncText.textContent = "Sincronizado";
+        } catch (err) {
+            console.warn('No se pudo sincronizar:', err);
+            if (syncIcon) syncIcon.className = "fa-solid fa-cloud text-emerald-300";
+            if (syncText) syncText.textContent = "Sheets (Offline)";
+        }
+    }
+
+    async sendAction(payload) {
+        const syncIcon = document.getElementById('syncIcon');
+        const syncText = document.getElementById('syncStatusText');
+        if (syncIcon) syncIcon.className = "fa-solid fa-spinner fa-spin text-emerald-300";
+        if (syncText) syncText.textContent = "Guardando...";
+        try {
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            console.log("✅ Respuesta:", result);
+            if (result.status === "success") {
+                if (syncIcon) syncIcon.className = "fa-solid fa-cloud-check text-emerald-300";
+                if (syncText) syncText.textContent = "Guardado";
+                return result;
+            } else {
+                if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
+                if (syncText) syncText.textContent = "Error";
+                return null;
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            if (syncIcon) syncIcon.className = "fa-solid fa-triangle-exclamation text-amber-300";
+            if (syncText) syncText.textContent = "Error al guardar";
+            return null;
+        }
+    }
+
+    loadPayments() { const d = localStorage.getItem(this.STORAGE_KEY_PAYMENTS); return d ? JSON.parse(d) : {}; }
+    savePayments() { localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments)); }
+
+    loadSchoolDeposits() {
+        const d = localStorage.getItem(this.STORAGE_KEY_SCHOOL);
+        if (!d) return {};
+        const parsed = JSON.parse(d);
+        if (Array.isArray(parsed)) {
+            const migrated = {};
+            parsed.forEach(dep => {
+                if (dep && dep.date) {
+                    const dt = new Date(dep.date);
+                    if (!isNaN(dt.getTime())) migrated[dt.getFullYear() + "_" + dt.getMonth()] = dep;
+                }
+            });
+            return migrated;
+        }
+        return parsed;
+    }
+    saveSchoolDeposits() { localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits)); }
+
+    changeYear(year) {
+        this.selectedYear = year;
+        document.querySelectorAll('.currentYearLabel').forEach(el => el.textContent = year);
+        this.renderAll();
+        this.syncFromCloud();
+    }
+
+    toggleAdminAuth() {
+        if (this.isAdmin) {
+            if (confirm("¿Cerrar sesión de administrador?")) { this.isAdmin = false; this.updateAdminUI(); }
+        } else this.openLoginModal();
+    }
+    openLoginModal() {
+        document.getElementById('loginPassInput').value = '';
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('loginModal').classList.remove('hidden');
+    }
+    handleLogin(e) {
+        e.preventDefault();
+        const p = document.getElementById('loginPassInput').value;
+        if (p === this.adminPassword) {
+            this.isAdmin = true;
+            this.closeModal('loginModal');
+            this.updateAdminUI();
+        } else document.getElementById('loginError').classList.remove('hidden');
+    }
+
+    openChangePassModal() {
+        document.getElementById('currPassInput').value = '';
+        document.getElementById('newPassInput').value = '';
+        document.getElementById('confirmPassInput').value = '';
+        document.getElementById('passChangeMsg').classList.add('hidden');
+        document.getElementById('changePassModal').classList.remove('hidden');
+    }
+    handleChangePass(e) {
+        e.preventDefault();
+        const cp = document.getElementById('currPassInput').value;
+        const np = document.getElementById('newPassInput').value;
+        const conf = document.getElementById('confirmPassInput').value;
+        const msg = document.getElementById('passChangeMsg');
+        if (cp !== this.adminPassword) {
+            msg.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
+            msg.textContent = "La contraseña actual es incorrecta.";
+            msg.classList.remove('hidden'); return;
+        }
+        if (np.length < 8) {
+            msg.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
+            msg.textContent = "Mínimo 8 caracteres.";
+            msg.classList.remove('hidden'); return;
+        }
+        if (np !== conf) {
+            msg.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-red-100 text-red-700";
+            msg.textContent = "Las contraseñas no coinciden.";
+            msg.classList.remove('hidden'); return;
+        }
+        this.adminPassword = np;
+        localStorage.setItem('ihss_admin_pass', np);
+        msg.className = "text-xs p-2.5 rounded-xl text-center font-semibold bg-emerald-100 text-emerald-800";
+        msg.textContent = "¡Contraseña actualizada!";
+        msg.classList.remove('hidden');
+        setTimeout(() => this.closeModal('changePassModal'), 1200);
+    }
+
+    updateAdminUI() {
+        const btnText = document.getElementById('adminBtnText');
+        const adminBtn = document.getElementById('adminStatusBtn');
+        const banner = document.getElementById('readOnlyBanner');
+        const adminElements = document.querySelectorAll('.admin-only');
+        if (this.isAdmin) {
+            btnText.textContent = "Admin Activo";
+            adminBtn.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-emerald-400 text-emerald-950 border border-emerald-200 cursor-pointer active:scale-95";
+            banner.classList.add('hidden');
+            adminElements.forEach(el => el.classList.remove('hidden'));
+        } else {
+            btnText.textContent = "Ingresar Clave";
+            adminBtn.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-white/15 hover:bg-white/25 border border-white/20 text-white cursor-pointer active:scale-95";
+            banner.classList.remove('hidden');
+            adminElements.forEach(el => el.classList.add('hidden'));
+        }
+        this.renderAll();
+    }
+
+    closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ============ PAGOS HERMANOS ============
+    getPayment(bid, year, midx) { return this.payments[year + "_" + bid + "_" + midx] || null; }
+    setPayment(bid, year, midx, data) {
+        const k = year + "_" + bid + "_" + midx;
+        if (data === null) delete this.payments[k];
+        else this.payments[k] = data;
+        this.savePayments();
+    }
+
+    openPaymentModal(brotherId, monthIdx) {
+        if (typeof brotherId === "undefined") brotherId = 1;
+        if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
+        document.getElementById('payBrotherId').value = brotherId;
+        document.getElementById('payMonthIdx').value = monthIdx;
+        const rec = this.getPayment(brotherId, this.selectedYear, monthIdx);
+        if (rec) {
+            document.getElementById('payAmount').value = rec.amount || BASE_FEE;
+            document.getElementById('payDate').value = rec.date || new Date().toISOString().split('T')[0];
+            document.getElementById('payNotes').value = rec.notes || '';
+            this.tempVoucherBase64 = rec.voucherImg || null;
+            if (rec.voucherImg) {
+                document.getElementById('voucherPreviewImg').src = rec.voucherImg;
+                document.getElementById('voucherPreviewContainer').classList.remove('hidden');
+            } else this.removeVoucherPreview();
+            document.getElementById('btnDeletePayment').classList.remove('hidden');
+        } else {
+            document.getElementById('payAmount').value = BASE_FEE;
+            document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('payNotes').value = '';
+            this.removeVoucherPreview();
+            document.getElementById('btnDeletePayment').classList.add('hidden');
+        }
+        document.getElementById('payVoucherInput').value = '';
+        document.getElementById('paymentModal').classList.remove('hidden');
+    }
+
+    handleVoucherPreview(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > MAX_IMAGE_SIZE) {
+            alert("Imagen muy grande. Máximo 5 MB.");
+            e.target.value = ''; return;
+        }
+        const r = new FileReader();
+        r.onload = (evt) => {
+            this.tempVoucherBase64 = evt.target.result;
+            document.getElementById('voucherPreviewImg').src = this.tempVoucherBase64;
+            document.getElementById('voucherPreviewContainer').classList.remove('hidden');
+        };
+        r.readAsDataURL(file);
+    }
+    removeVoucherPreview() {
+        this.tempVoucherBase64 = null;
+        document.getElementById('voucherPreviewImg').src = '';
+        document.getElementById('voucherPreviewContainer').classList.add('hidden');
+        document.getElementById('payVoucherInput').value = '';
+    }
+
+    async handleSavePayment(e) {
+        e.preventDefault();
+        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const midx = parseInt(document.getElementById('payMonthIdx').value);
+        const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
+        const date = document.getElementById('payDate').value;
+        const notes = document.getElementById('payNotes').value;
+        if (!this.isAdmin) { alert("Autentíquese primero."); this.openLoginModal(); return; }
+        const brother = BROTHERS.find(b => b.id === bid);
+        const key = this.selectedYear + "_" + bid + "_" + midx;
+        const obj = { amount, date, notes, voucherImg: this.tempVoucherBase64, updatedBy: 'Ricardo Cruz', timestamp: new Date().toISOString() };
+        this.localVersion++;
+        this.setPayment(bid, this.selectedYear, midx, obj);
+        this.closeModal('paymentModal');
+        this.renderAll();
+        const result = await this.sendAction({ action: "savePayment", key, brotherName: brother.name, monthName: MONTH_NAMES[midx], year: this.selectedYear, data: obj });
+        if (result && result.savedPayment && result.savedPayment.voucherImg) {
+            if (this.payments[key]) {
+                this.payments[key].voucherImg = result.savedPayment.voucherImg;
+                this.savePayments();
                 this.renderAll();
-
-                const result = await this.sendAction({ action: "saveSchool", data: newDeposit });
-
-                let savedDeposit = newDeposit;
-                if (result && result.savedSchool && result.savedSchool.voucherImg) {
-                    const idx = this.schoolDeposits.findIndex(d => d.id === newDeposit.id);
-                    if (idx >= 0) {
-                        this.schoolDeposits[idx].voucherImg = result.savedSchool.voucherImg;
-                        this.saveSchoolDeposits();
-                        this.renderAll();
-                        savedDeposit = this.schoolDeposits[idx];
-                    } else {
-                        savedDeposit = result.savedSchool;
-                    }
-                }
-
-                const waUrl = this.buildNadiaMessage(savedDeposit);
-                if (waWindow && waUrl) {
-                    waWindow.location.href = waUrl;
-                } else if (waUrl) {
-                    window.open(waUrl, '_blank');
-                }
             }
+        }
+    }
 
-            async deleteSchoolDeposit(depositId) {
-                if (!this.isAdmin) return;
-                if (confirm("¿Eliminar este depósito bancario a la escuela?")) {
-                    this.localVersion++;
-                    this.schoolDeposits = this.schoolDeposits.filter(d => d.id !== depositId);
-                    this.saveSchoolDeposits();
-                    this.renderAll();
-                    await this.sendAction({ action: "deleteSchool", id: depositId });
-                }
+    async deletePaymentRecord() {
+        if (!this.isAdmin) { alert("Solo admin."); return; }
+        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const midx = parseInt(document.getElementById('payMonthIdx').value);
+        const brother = BROTHERS.find(b => b.id === bid);
+        const key = this.selectedYear + "_" + bid + "_" + midx;
+        if (confirm("¿Eliminar pago de " + brother.name + " de " + MONTH_NAMES[midx] + " " + this.selectedYear + "?")) {
+            this.localVersion++;
+            this.setPayment(bid, this.selectedYear, midx, null);
+            this.closeModal('paymentModal');
+            this.renderAll();
+            await this.sendAction({ action: "deletePayment", key });
+        }
+    }
+
+    // ============ DEPÓSITOS ESCUELA ============
+    getSchoolDeposit(year, midx) { return this.schoolDeposits[year + "_" + midx] || null; }
+    setSchoolDeposit(year, midx, data) {
+        const k = year + "_" + midx;
+        if (data === null) delete this.schoolDeposits[k];
+        else this.schoolDeposits[k] = data;
+        this.saveSchoolDeposits();
+    }
+
+    openSchoolDepositModal(monthIdx) {
+        if (!this.isAdmin) { alert("Requiere clave de administrador."); this.openLoginModal(); return; }
+        if (typeof monthIdx === "undefined") monthIdx = new Date().getMonth();
+        this.currentSchoolMonth = monthIdx;
+
+        const label = MONTH_NAMES[monthIdx] + " " + this.selectedYear;
+        document.getElementById('schoolMonthLabel').textContent = label;
+        document.getElementById('schoolMonthDisplay').textContent = label;
+
+        const rec = this.getSchoolDeposit(this.selectedYear, monthIdx);
+        if (rec) {
+            document.getElementById('schoolAmount').value = rec.amount || '';
+            document.getElementById('schoolDate').value = rec.date || new Date().toISOString().split('T')[0];
+            document.getElementById('schoolBank').value = rec.bank || 'Banpaís';
+            document.getElementById('schoolRef').value = rec.ref || '';
+            document.getElementById('schoolNotes').value = rec.notes || '';
+            this.tempSchoolVoucherBase64 = rec.voucherImg || null;
+            if (rec.voucherImg) {
+                document.getElementById('schoolVoucherPreviewImg').src = rec.voucherImg;
+                document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
+            } else {
+                this.removeSchoolVoucherPreview();
             }
+            document.getElementById('btnDeleteSchool').classList.remove('hidden');
+        } else {
+            document.getElementById('schoolAmount').value = '';
+            document.getElementById('schoolDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('schoolBank').value = 'Banpaís';
+            document.getElementById('schoolRef').value = '';
+            document.getElementById('schoolNotes').value = '';
+            this.removeSchoolVoucherPreview();
+            document.getElementById('btnDeleteSchool').classList.add('hidden');
+        }
+        document.getElementById('schoolVoucherInput').value = '';
+        document.getElementById('schoolModal').classList.remove('hidden');
+    }
 
-            openLightbox(imgSrc, caption) {
-                if (!imgSrc) return;
-                document.getElementById('lightboxImg').src = imgSrc;
-                document.getElementById('lightboxCaption').textContent = caption || 'Comprobante de depósito / voucher';
-                document.getElementById('imageLightboxModal').classList.remove('hidden');
-            }
+    handleSchoolVoucherPreview(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > MAX_IMAGE_SIZE) {
+            alert("Imagen muy grande. Máximo 5 MB.");
+            e.target.value = ''; return;
+        }
+        const r = new FileReader();
+        r.onload = (evt) => {
+            this.tempSchoolVoucherBase64 = evt.target.result;
+            document.getElementById('schoolVoucherPreviewImg').src = this.tempSchoolVoucherBase64;
+            document.getElementById('schoolVoucherPreviewContainer').classList.remove('hidden');
+        };
+        r.readAsDataURL(file);
+    }
+    removeSchoolVoucherPreview() {
+        this.tempSchoolVoucherBase64 = null;
+        document.getElementById('schoolVoucherPreviewImg').src = '';
+        document.getElementById('schoolVoucherPreviewContainer').classList.add('hidden');
+        document.getElementById('schoolVoucherInput').value = '';
+    }
 
-            openLightboxById(depositId) {
-                const d = this.schoolDeposits.find(x => x.id === depositId);
-                if (d && d.voucherImg) {
-                    this.openLightbox(d.voucherImg, "Depósito: L. " + d.amount + " - " + d.bank);
-                }
-            }
+    async handleSaveSchoolDeposit(e, notifyNadia) {
+        if (e) e.preventDefault();
+        if (!this.isAdmin) { alert("Autentíquese primero."); return; }
+        const amount = parseFloat(document.getElementById('schoolAmount').value);
+        const date = document.getElementById('schoolDate').value;
+        const bank = document.getElementById('schoolBank').value;
+        const ref = document.getElementById('schoolRef').value;
+        const notes = document.getElementById('schoolNotes').value;
 
-            renderAll() {
-                this.renderMatrix();
-                this.renderKPIs();
-                this.renderSchoolDeposits();
-            }
+        const midx = this.currentSchoolMonth;
+        const key = this.selectedYear + "_" + midx;
 
-            renderMatrix() {
-                const tbody = document.getElementById('brothersMatrixBody');
-                tbody.innerHTML = '';
+        const obj = {
+            id: 'sch_' + this.selectedYear + '_' + midx,
+            amount, date, bank, ref, notes,
+            voucherImg: this.tempSchoolVoucherBase64,
+            timestamp: new Date().toISOString()
+        };
 
-                BROTHERS.forEach(brother => {
-                    let brotherYearTotal = 0;
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+        // Abrir ventana WhatsApp ANTES del await (evita popup blocker)
+        let waWin = null;
+        if (notifyNadia) waWin = window.open('about:blank', '_blank');
 
-                    const contactSection = this.isAdmin
-                        ? '<span><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>' + brother.displayPhone + '</span>' +
-                          '<a href="https://wa.me/' + brother.phone.replace('+', '') + '" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1"><i class="fa-brands fa-whatsapp text-sm"></i></a>'
-                        : '<span class="text-slate-400 italic text-[10px]"><i class="fa-solid fa-lock text-slate-400 mr-1"></i>Datos privados</span>';
+        this.localVersion++;
+        this.setSchoolDeposit(this.selectedYear, midx, obj);
+        this.closeModal('schoolModal');
+        this.renderAll();
 
-                    const brotherTd =
-                        '<td class="py-3 px-4 bg-slate-50/50 sticky left-0 border-r border-slate-200">' +
-                            '<div class="font-bold text-slate-800 text-sm flex items-center justify-between">' +
-                                '<span>' + brother.id + '.- ' + brother.name + '</span>' +
-                            '</div>' +
-                            '<div class="text-[11px] text-slate-500 flex items-center justify-between mt-1">' +
-                                contactSection +
-                            '</div>' +
-                        '</td>';
+        const result = await this.sendAction({
+            action: "saveSchool",
+            key,
+            year: this.selectedYear,
+            monthName: MONTH_NAMES[midx],
+            data: obj
+        });
 
-                    let monthsHtml = '';
-                    for (let m = 0; m < 12; m++) {
-                        const rec = this.getPayment(brother.id, this.selectedYear, m);
-                        let cellContent = '';
-
-                        if (rec) {
-                            brotherYearTotal += rec.amount;
-                            const hasVoucher = !!rec.voucherImg;
-                            cellContent =
-                                '<button onclick="app.openPaymentModal(' + brother.id + ', ' + m + ')" class="w-full h-11 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 p-1 flex flex-col items-center justify-center transition shadow-sm group relative">' +
-                                    '<span class="font-extrabold text-[11px]">L. ' + rec.amount + '</span>' +
-                                    '<div class="flex items-center gap-1 text-[9px] text-emerald-700">' +
-                                        '<i class="fa-solid fa-circle-check"></i>' +
-                                        (hasVoucher ? '<i class="fa-solid fa-paperclip text-emerald-800"></i>' : '') +
-                                    '</div>' +
-                                '</button>';
-                        } else {
-                            cellContent =
-                                '<button onclick="app.openPaymentModal(' + brother.id + ', ' + m + ')" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-emerald-50 text-slate-400 hover:text-emerald-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">' +
-                                    '<span class="text-[10px] font-semibold">Pendiente</span>' +
-                                    '<span class="text-[9px] font-light">L. 330</span>' +
-                                '</button>';
-                        }
-                        monthsHtml += '<td class="py-2 px-1 text-center">' + cellContent + '</td>';
-                    }
-
-                    const totalTd =
-                        '<td class="py-3 px-4 text-right bg-slate-50/50 border-l border-slate-200 font-black text-slate-900 text-sm">' +
-                            'L. ' + brotherYearTotal.toLocaleString('es-HN', { minimumFractionDigits: 2 }) +
-                        '</td>';
-
-                    tr.innerHTML = brotherTd + monthsHtml + totalTd;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            renderKPIs() {
-                let totalCollectedYear = 0;
-                let currentMonthPaidCount = 0;
-                const currentMonthIdx = new Date().getMonth();
-
-                BROTHERS.forEach(b => {
-                    for (let m = 0; m < 12; m++) {
-                        const rec = this.getPayment(b.id, this.selectedYear, m);
-                        if (rec) {
-                            totalCollectedYear += rec.amount;
-                            if (m === currentMonthIdx) currentMonthPaidCount++;
-                        }
-                    }
-                });
-
-                const expectedAnnual = 5 * 12 * BASE_FEE;
-                const percent = Math.round((totalCollectedYear / expectedAnnual) * 100);
-
-                document.getElementById('kpiTotalExpected').textContent = 'L. ' + expectedAnnual.toLocaleString('es-HN') + '.00';
-                document.getElementById('kpiTotalCollected').textContent = 'L. ' + totalCollectedYear.toLocaleString('es-HN', { minimumFractionDigits: 2 });
-                document.getElementById('kpiCollectionPercent').textContent = percent + '% de la meta anual';
-                document.getElementById('kpiCurrentMonthStatus').textContent = currentMonthPaidCount + ' / 5';
-                document.getElementById('kpiMonthName').textContent = 'Hermanos al día en ' + MONTH_NAMES[currentMonthIdx];
-
-                const schoolSum = this.schoolDeposits.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-                document.getElementById('kpiSchoolTotal').textContent = 'L. ' + schoolSum.toLocaleString('es-HN', { minimumFractionDigits: 2 });
-            }
-
-            renderSchoolDeposits() {
-                const container = document.getElementById('schoolDepositsList');
-                container.innerHTML = '';
-
-                if (this.schoolDeposits.length === 0) {
-                    container.innerHTML =
-                        '<div class="col-span-full py-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">' +
-                            '<i class="fa-solid fa-building-columns text-3xl mb-2 text-slate-300"></i>' +
-                            '<p class="text-sm font-semibold">No se han registrado depósitos a la escuela aún.</p>' +
-                            '<p class="text-xs">Los depósitos registrados por el administrador aparecerán en esta sección.</p>' +
-                        '</div>';
-                    return;
-                }
-
-                this.schoolDeposits.forEach(deposit => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:shadow-md transition relative group";
-                    const hasImage = !!deposit.voucherImg;
-                    const amountFmt = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
-
-                    card.innerHTML =
-                        '<div>' +
-                            '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">' +
-                                '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">' +
-                                    '<i class="fa-solid fa-university mr-1"></i> ' + (deposit.bank || 'Banco') +
-                                '</span>' +
-                                '<span class="text-xs text-slate-400 font-medium">' + deposit.date + '</span>' +
-                            '</div>' +
-                            '<p class="text-2xl font-black text-slate-900 mb-1">' +
-                                'L. ' + amountFmt +
-                            '</p>' +
-                            (deposit.ref ? '<p class="text-xs text-slate-500 font-mono mb-2"><i class="fa-solid fa-receipt mr-1"></i>Ref: ' + deposit.ref + '</p>' : '') +
-                            (deposit.notes ? '<p class="text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mb-3 border border-slate-100">' + deposit.notes + '</p>' : '') +
-                        '</div>' +
-                        '<div class="pt-2 border-t border-slate-100 flex items-center justify-between mt-2">' +
-                            (hasImage ?
-                                '<button onclick="app.openLightboxById(\'' + deposit.id + '\')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 border border-emerald-200">' +
-                                    '<i class="fa-solid fa-image text-emerald-600"></i> Ver Comprobante' +
-                                '</button>'
-                                : '<span class="text-[11px] text-slate-400 italic">Sin comprobante adjunto</span>'
-                            ) +
-                            (this.isAdmin ?
-                                '<button onclick="app.deleteSchoolDeposit(\'' + deposit.id + '\')" class="text-red-500 hover:text-red-700 text-xs p-1.5 rounded-lg hover:bg-red-50 transition">' +
-                                    '<i class="fa-solid fa-trash-can"></i>' +
-                                '</button>'
-                                : ''
-                            ) +
-                        '</div>';
-
-                    container.appendChild(card);
-                });
+        let saved = obj;
+        if (result && result.savedSchool) {
+            saved = result.savedSchool;
+            const k = this.selectedYear + "_" + midx;
+            if (this.schoolDeposits[k]) {
+                this.schoolDeposits[k].voucherImg = saved.voucherImg;
+                this.saveSchoolDeposits();
+                this.renderAll();
             }
         }
 
-        let app;
-        window.addEventListener('DOMContentLoaded', function() {
-            app = new IHSSApp();
-            app.init();
+        if (notifyNadia) {
+            const url = this.buildNadiaMessage(saved, midx);
+            if (waWin) waWin.location.href = url;
+            else window.open(url, '_blank');
+        }
+    }
+
+    async deleteSchoolDeposit() {
+        if (!this.isAdmin) return;
+        const midx = this.currentSchoolMonth;
+        if (confirm("¿Eliminar depósito de " + MONTH_NAMES[midx] + " " + this.selectedYear + "?")) {
+            this.localVersion++;
+            this.setSchoolDeposit(this.selectedYear, midx, null);
+            this.closeModal('schoolModal');
+            this.renderAll();
+            await this.sendAction({ action: "deleteSchool", key: this.selectedYear + "_" + midx });
+        }
+    }
+
+    buildNadiaMessage(deposit, monthIdx) {
+        if (!deposit) return '';
+        const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        const bank = deposit.bank || 'Banpaís';
+        const ref = deposit.ref || 'N/A';
+        const date = deposit.date || '';
+        const notes = deposit.notes || 'Sin notas';
+        const voucherUrl = (deposit.voucherImg && deposit.voucherImg.indexOf("http") === 0) ? deposit.voucherImg : '';
+        const mesLabel = MONTH_NAMES[monthIdx] + " " + this.selectedYear;
+
+        let msg = "🏦 AVISO DE DEPÓSITO BANCARIO - ESCUELA PROVERBIOS 22:6\n\n";
+        msg += "Hola Nadia, esperamos que estés muy bien. 😊\n\n";
+        msg += "Te informamos que se ha realizado el depósito correspondiente a la cuota mensual del IHSS de Miriam García:\n\n";
+        msg += "🏫 Destino: Escuela Proverbios 22:6\n";
+        msg += "📅 Mes Cubierto: " + mesLabel + "\n";
+        msg += "🏦 Banco: " + bank + "\n";
+        msg += "💳 Nº Comprobante: " + ref + "\n";
+        msg += "💰 Monto Depositado: L. " + amountText + "\n";
+        msg += "🗓️ Fecha: " + date + "\n";
+        msg += "📌 Notas: " + notes + "\n";
+        if (voucherUrl) msg += "\n🖼️ Ver comprobante:\n" + voucherUrl + "\n";
+        msg += "\n✍️ Administrador: Ricardo Cruz\n¡Gracias por confirmar la recepción! 🙏🏼";
+        return "https://wa.me/" + NADIA_PHONE.replace('+', '') + "?text=" + encodeURIComponent(msg);
+    }
+
+    openLightbox(src, caption) {
+        if (!src) return;
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightboxCaption').textContent = caption || '';
+        document.getElementById('imageLightboxModal').classList.remove('hidden');
+    }
+    openLightboxById(depositId) {
+        for (const k in this.schoolDeposits) {
+            const d = this.schoolDeposits[k];
+            if (d.id === depositId && d.voucherImg) {
+                this.openLightbox(d.voucherImg, "Depósito L. " + d.amount + " - " + (d.bank || ''));
+                return;
+            }
+        }
+    }
+    openLightboxByMonth(monthIdx) {
+        const d = this.getSchoolDeposit(this.selectedYear, monthIdx);
+        if (d && d.voucherImg) {
+            this.openLightbox(d.voucherImg, "Depósito " + MONTH_NAMES[monthIdx] + " - L. " + d.amount);
+        }
+    }
+
+    // ============ WHATSAPP HERMANOS ============
+    sendWhatsAppConfirmation() {
+        if (!this.isAdmin) return;
+        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const midx = parseInt(document.getElementById('payMonthIdx').value);
+        const amount = parseFloat(document.getElementById('payAmount').value) || BASE_FEE;
+        const date = document.getElementById('payDate').value;
+        const notes = document.getElementById('payNotes').value.trim() || 'Registrado por Ricardo Cruz';
+        const brother = BROTHERS.find(b => b.id === bid);
+        const rec = this.getPayment(bid, this.selectedYear, midx);
+        const voucherUrl = (rec && rec.voucherImg && rec.voucherImg.indexOf("http") === 0) ? rec.voucherImg : '';
+        const amountText = amount.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        let m = "🧾 INFORME DE PAGO RECIBIDO - IHSS MADRE\n\n";
+        m += "Hola " + brother.name + ", confirmamos la recepción de tu aportación:\n\n";
+        m += "👤 Aportante: " + brother.name + "\n";
+        m += "📅 Mes: " + MONTH_NAMES[midx] + " (" + this.selectedYear + ")\n";
+        m += "💰 Monto: L. " + amountText + "\n";
+        m += "🗓️ Fecha: " + date + "\n";
+        m += "📌 Notas: " + notes + "\n";
+        if (voucherUrl) m += "\n🖼️ Ver comprobante:\n" + voucherUrl + "\n";
+        m += "\n✍️ Administrador: Ricardo Cruz\n¡Gracias! 🙏🏼";
+        window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(m), '_blank');
+    }
+    sendWhatsAppReminder() {
+        if (!this.isAdmin) return;
+        const bid = parseInt(document.getElementById('payBrotherId').value);
+        const midx = parseInt(document.getElementById('payMonthIdx').value);
+        const brother = BROTHERS.find(b => b.id === bid);
+        const amountText = BASE_FEE.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        let m = "🔔 RECORDATORIO DE PAGO - IHSS MADRE\n\n";
+        m += "Hola " + brother.name + ", esperamos que estés muy bien. 😊\n\n";
+        m += "Aún no hemos recibido tu aportación de:\n\n";
+        m += "👤 Aportante: " + brother.name + "\n";
+        m += "📅 Mes: " + MONTH_NAMES[midx] + " (" + this.selectedYear + ")\n";
+        m += "💰 Monto: L. " + amountText + "\n";
+        m += "📆 Estado: ⏳ Pendiente\n\n";
+        m += "📸 Al realizar el pago, envía la foto del comprobante.\n\n";
+        m += "✍️ Administrador: Ricardo Cruz\n¡Gracias! 🙏🏼";
+        window.open("https://wa.me/" + brother.phone.replace('+', '') + "?text=" + encodeURIComponent(m), '_blank');
+    }
+
+    // ============ RENDER ============
+    renderAll() {
+        this.renderMatrix();
+        this.renderSchoolMatrix();
+        this.renderKPIs();
+    }
+
+    renderMatrix() {
+        const tbody = document.getElementById('brothersMatrixBody');
+        tbody.innerHTML = '';
+        BROTHERS.forEach(brother => {
+            let total = 0;
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+            const contact = this.isAdmin
+                ? '<span><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>' + brother.displayPhone + '</span>' +
+                  '<a href="https://wa.me/' + brother.phone.replace('+','') + '" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1"><i class="fa-brands fa-whatsapp text-sm"></i></a>'
+                : '<span class="text-slate-400 italic text-[10px]"><i class="fa-solid fa-lock mr-1"></i>Datos privados</span>';
+            let td = '<td class="py-3 px-4 bg-slate-50/50 sticky left-0 border-r border-slate-200 z-10">' +
+                '<div class="font-bold text-slate-800 text-sm">' + brother.id + '.- ' + brother.name + '</div>' +
+                '<div class="text-[11px] text-slate-500 flex items-center justify-between mt-1">' + contact + '</div></td>';
+            let cells = '';
+            for (let m = 0; m < 12; m++) {
+                const rec = this.getPayment(brother.id, this.selectedYear, m);
+                let c;
+                if (rec) {
+                    total += rec.amount;
+                    const h = !!rec.voucherImg;
+                    c = '<button onclick="app.openPaymentModal(' + brother.id + ',' + m + ')" class="w-full h-11 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 p-1 flex flex-col items-center justify-center transition shadow-sm">' +
+                        '<span class="font-extrabold text-[11px]">L. ' + rec.amount + '</span>' +
+                        '<div class="flex items-center gap-1 text-[9px] text-emerald-700"><i class="fa-solid fa-circle-check"></i>' +
+                        (h ? '<i class="fa-solid fa-paperclip text-emerald-800"></i>' : '') + '</div></button>';
+                } else {
+                    c = '<button onclick="app.openPaymentModal(' + brother.id + ',' + m + ')" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-emerald-50 text-slate-400 hover:text-emerald-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">' +
+                        '<span class="text-[10px] font-semibold">Pendiente</span>' +
+                        '<span class="text-[9px] font-light">L. 330</span></button>';
+                }
+                cells += '<td class="py-2 px-1 text-center">' + c + '</td>';
+            }
+            const totalTd = '<td class="py-3 px-4 text-right bg-slate-50/50 border-l border-slate-200 font-black text-slate-900 text-sm">L. ' +
+                total.toLocaleString('es-HN', { minimumFractionDigits: 2 }) + '</td>';
+            tr.innerHTML = td + cells + totalTd;
+            tbody.appendChild(tr);
         });
-    </script>
+    }
+
+    renderSchoolMatrix() {
+        const tbody = document.getElementById('schoolMatrixBody');
+        tbody.innerHTML = '';
+        let total = 0;
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+        const td = '<td class="py-3 px-4 bg-teal-50/50 sticky left-0 border-r border-slate-200 z-10">' +
+            '<div class="font-bold text-slate-800 text-sm flex items-center gap-1">' +
+            '<i class="fa-solid fa-school text-teal-700"></i> Escuela Proverbios 22:6</div>' +
+            '<div class="text-[11px] text-slate-500 mt-1">Depósitos a Banpaís</div></td>';
+        let cells = '';
+        for (let m = 0; m < 12; m++) {
+            const rec = this.getSchoolDeposit(this.selectedYear, m);
+            let c;
+            if (rec) {
+                total += parseFloat(rec.amount) || 0;
+                const h = !!rec.voucherImg;
+                c = '<button onclick="app.openSchoolDepositModal(' + m + ')" class="w-full h-11 rounded-xl bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-300 p-1 flex flex-col items-center justify-center transition shadow-sm">' +
+                    '<span class="font-extrabold text-[11px]">L. ' + parseFloat(rec.amount).toLocaleString('es-HN') + '</span>' +
+                    '<div class="flex items-center gap-1 text-[9px] text-teal-700"><i class="fa-solid fa-circle-check"></i>' +
+                    (h ? '<i class="fa-solid fa-paperclip text-teal-800"></i>' : '') + '</div></button>';
+            } else {
+                c = '<button onclick="app.openSchoolDepositModal(' + m + ')" class="w-full h-11 rounded-xl bg-slate-100/70 hover:bg-teal-50 text-slate-400 hover:text-teal-700 border border-slate-200 border-dashed p-1 flex flex-col items-center justify-center transition">' +
+                    '<span class="text-[10px] font-semibold">Pendiente</span>' +
+                    '<span class="text-[9px] font-light">—</span></button>';
+            }
+            cells += '<td class="py-2 px-1 text-center">' + c + '</td>';
+        }
+        const totalTd = '<td class="py-3 px-4 text-right bg-teal-50/50 border-l border-slate-200 font-black text-teal-900 text-sm">L. ' +
+            total.toLocaleString('es-HN', { minimumFractionDigits: 2 }) + '</td>';
+        tr.innerHTML = td + cells + totalTd;
+        tbody.appendChild(tr);
+    }
+
+    renderKPIs() {
+        let totalCollected = 0, currentMonthPaid = 0;
+        const cmi = new Date().getMonth();
+        BROTHERS.forEach(b => {
+            for (let m = 0; m < 12; m++) {
+                const rec = this.getPayment(b.id, this.selectedYear, m);
+                if (rec) {
+                    totalCollected += rec.amount;
+                    if (m === cmi) currentMonthPaid++;
+                }
+            }
+        });
+        const expected = 5 * 12 * BASE_FEE;
+        const percent = Math.round((totalCollected / expected) * 100);
+        document.getElementById('kpiTotalExpected').textContent = 'L. ' + expected.toLocaleString('es-HN') + '.00';
+        document.getElementById('kpiTotalCollected').textContent = 'L. ' + totalCollected.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+        document.getElementById('kpiCollectionPercent').textContent = percent + '% de la meta anual';
+        document.getElementById('kpiCurrentMonthStatus').textContent = currentMonthPaid + ' / 5';
+        document.getElementById('kpiMonthName').textContent = 'Hermanos al día en ' + MONTH_NAMES[cmi];
+
+        let schoolTotal = 0;
+        for (let m = 0; m < 12; m++) {
+            const rec = this.getSchoolDeposit(this.selectedYear, m);
+            if (rec) schoolTotal += parseFloat(rec.amount) || 0;
+        }
+        document.getElementById('kpiSchoolTotal').textContent = 'L. ' + schoolTotal.toLocaleString('es-HN', { minimumFractionDigits: 2 });
+    }
+}
+
+let app;
+window.addEventListener('DOMContentLoaded', function() {
+    app = new IHSSApp();
+    app.init();
+});
+</script>
 </body>
 </html>
