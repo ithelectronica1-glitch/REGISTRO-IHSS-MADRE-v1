@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cuotas IHSS Madre - V12</title>
+    <title>Registro de Cuotas IHSS Madre - V12.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                         <span id="appTitle">Registro de Cuotas IHSS Madre</span>
-                        <span id="appVersionBadge" class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V12</span>
+                        <span id="appVersionBadge" class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V12.1</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-emerald-200 flex items-center gap-1.5 mt-0.5">
                         <i class="fa-solid fa-user-shield text-emerald-300"></i>
@@ -210,7 +210,7 @@
         <p class="font-medium text-slate-300">
             <span id="footerAppName">Registro de Cuotas IHSS Madre</span>
             &copy; <span id="footerSystemYear">—</span>
-            &middot; <span id="footerVersion" class="text-emerald-400 font-bold">V12</span>
+            &middot; <span id="footerVersion" class="text-emerald-400 font-bold">V12.1</span>
         </p>
         <p class="text-slate-500 text-[11px]">
             Administrador responsable: <strong id="footerAdminName">—</strong> | <span id="footerSchoolName">—</span>
@@ -428,7 +428,7 @@
    Todo valor configurable vive en un solo objeto CFG.
    ═══════════════════════════════════════════════════════ */
 const CFG = {
-    APP_VERSION:     "V12",
+    APP_VERSION:     "V12.1",
     APP_NAME:        "Registro de Cuotas IHSS Madre",
     ADMIN_NAME:      "Ricardo Cruz",
     MADRE_NAME:      "Miriam García",
@@ -618,7 +618,8 @@ class IHSSApp {
                     const migrated = {};
                     school.forEach(d => {
                         if (d && d.date) {
-                            const dt = new Date(d.date);
+                            // MEJORA (Parche V12.1): evitar desfase de zona horaria
+                            const dt = new Date(d.date + 'T12:00:00');
                             if (!isNaN(dt.getTime())) migrated[dt.getFullYear() + "_" + dt.getMonth()] = d;
                         }
                     });
@@ -689,7 +690,19 @@ class IHSSApp {
 
     /* ═══════════ PERSISTENCIA LOCAL ═══════════ */
     loadPayments() { const d = localStorage.getItem(this.STORAGE_KEY_PAYMENTS); return d ? JSON.parse(d) : {}; }
-    savePayments() { localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments)); }
+    
+    // MEJORA (Parche V12.1): protección contra límite de localStorage
+    savePayments() { 
+        try {
+            localStorage.setItem(this.STORAGE_KEY_PAYMENTS, JSON.stringify(this.payments)); 
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert("⚠️ Memoria del navegador llena. Por favor, elimina registros antiguos o usa imágenes más pequeñas.");
+            } else {
+                console.error("Error al guardar pagos:", e);
+            }
+        }
+    }
 
     loadSchoolDeposits() {
         const d = localStorage.getItem(this.STORAGE_KEY_SCHOOL);
@@ -699,7 +712,8 @@ class IHSSApp {
             const migrated = {};
             parsed.forEach(dep => {
                 if (dep && dep.date) {
-                    const dt = new Date(dep.date);
+                    // MEJORA (Parche V12.1): evitar desfase de zona horaria
+                    const dt = new Date(dep.date + 'T12:00:00');
                     if (!isNaN(dt.getTime())) migrated[dt.getFullYear() + "_" + dt.getMonth()] = dep;
                 }
             });
@@ -707,7 +721,19 @@ class IHSSApp {
         }
         return parsed;
     }
-    saveSchoolDeposits() { localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits)); }
+    
+    // MEJORA (Parche V12.1): protección contra límite de localStorage
+    saveSchoolDeposits() { 
+        try {
+            localStorage.setItem(this.STORAGE_KEY_SCHOOL, JSON.stringify(this.schoolDeposits)); 
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert("⚠️ Memoria del navegador llena. Por favor, elimina registros antiguos o usa imágenes más pequeñas.");
+            } else {
+                console.error("Error al guardar depósitos:", e);
+            }
+        }
+    }
 
     /* ═══════════ CAMBIO DE AÑO ═══════════ */
     changeYear(year) {
