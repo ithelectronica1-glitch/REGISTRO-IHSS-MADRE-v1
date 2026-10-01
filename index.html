@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cuotas IHSS Madre - V4</title>
+    <title>Registro de Cuotas IHSS Madre - V9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,7 +40,7 @@
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                         Registro de Cuotas IHSS Madre
-                        <span class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V4</span>
+                        <span class="text-[10px] bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full font-black">V9</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-emerald-200 flex items-center gap-1.5 mt-0.5">
                         <i class="fa-solid fa-user-shield text-emerald-300"></i>
@@ -219,12 +219,11 @@
 
 <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
     <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-        <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span> &middot; <span class="text-emerald-400 font-bold">V4</span></p>
+        <p class="font-medium text-slate-300">Registro de Cuotas IHSS Madre &copy; <span class="currentYearLabel">2026</span> &middot; <span class="text-emerald-400 font-bold">V9</span></p>
         <p class="text-slate-500 text-[11px]">Administrador responsable: <strong>Ricardo Cruz</strong> | Escuela Proverbios 22:6</p>
     </div>
 </footer>
 
-<!-- MODAL LOGIN -->
 <div id="loginModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
         <div class="p-6 bg-emerald-900 text-white text-center relative">
@@ -251,7 +250,6 @@
     </div>
 </div>
 
-<!-- MODAL CAMBIAR PASS -->
 <div id="changePassModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
         <div class="p-6 bg-emerald-900 text-white text-center relative">
@@ -280,7 +278,6 @@
     </div>
 </div>
 
-<!-- MODAL PAGO HERMANO -->
 <div id="paymentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
         <div class="p-5 bg-emerald-900 text-white flex items-center justify-between">
@@ -364,7 +361,6 @@
     </div>
 </div>
 
-<!-- MODAL ESCUELA -->
 <div id="schoolModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
         <div class="p-5 bg-emerald-950 text-white flex items-center justify-between">
@@ -435,7 +431,6 @@
     </div>
 </div>
 
-<!-- LIGHTBOX -->
 <div id="imageLightboxModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden" onclick="app.closeModal('imageLightboxModal')">
     <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
         <button onclick="app.closeModal('imageLightboxModal')" class="absolute -top-10 right-0 text-white text-3xl hover:text-emerald-400 font-bold"><i class="fa-solid fa-xmark"></i></button>
@@ -445,7 +440,7 @@
 </div>
 
 <script>
-const APP_VERSION = "V4";
+const APP_VERSION = "V9";
 const BROTHERS = [
     { id: 1, name: "Jose", phone: "+50488029422", displayPhone: "+504 88029422" },
     { id: 2, name: "Oscar", phone: "+50433896279", displayPhone: "+504 33896279" },
@@ -492,7 +487,6 @@ class IHSSApp {
         setInterval(() => { this.syncFromCloud(); }, 60000);
     }
 
-    // 🔄 Forzar actualización de la app
     refreshApp() {
         if (confirm("🔄 ¿Actualizar la aplicación?\n\nSe recargará con la última versión disponible.\n\nAsegúrese de haber guardado todos los cambios.")) {
             const baseUrl = window.location.origin + window.location.pathname;
@@ -939,7 +933,6 @@ class IHSSApp {
         }
     }
 
-    // 📱 Mensaje profesional para Nadia
     buildNadiaMessage(deposit, monthIdx) {
         if (!deposit) return '';
         const amountText = parseFloat(deposit.amount).toLocaleString('es-HN', { minimumFractionDigits: 2 });
